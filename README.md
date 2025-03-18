@@ -47,8 +47,8 @@ Set-ExecutionPolicy Unrestricted
 
 2 - Clone this rep
 ```
-https://github.com/orafaelmiguel/Win10TweakTool.git
-cd Win10TweakTool
+git clone https://github.com/orafaelmiguel/Windows10-Gaming-Optimizer.git
+cd Windows10-Gaming-Optimizer
 ```
 
 3 - Install Git Bash in https://git-scm.com/downloads
