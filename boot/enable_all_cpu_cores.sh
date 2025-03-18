@@ -8,7 +8,7 @@ CPU_CORES=$(powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \
 echo "Detected $CPU_CORES CPU cores."
 
 powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \
-    "reg add 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Configuration Manager' /v NumProcs /t REG_DWORD /d $CPU_CORES /f"
+    "reg add 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Configuration Manager' /v NumProcs /t REG_DWORD /d $CPU_CORES"
 
 CHECK_CORES=$(powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \
     "(Get-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Configuration Manager' -Name NumProcs).NumProcs")
