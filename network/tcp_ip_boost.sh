@@ -11,7 +11,7 @@ powershell.exe -Command "netsh int tcp set supplemental custom congestionprovide
 powershell.exe -Command "netsh int tcp set heuristics disabled"
 
 echo "Restarting active network adapters to apply changes..."
-powershell.exe -Command "& { Get-NetAdapter | Where-Object { $_.Status -eq 'Up' } | Restart-NetAdapter -Confirm:$false }"
+powershell.exe -Command "& {Get-NetAdapter | Where-Object { $_.Status -eq 'Up' } | Restart-NetAdapter -Confirm:$false}"
 
 powershell.exe -Command "netsh int tcp show global"
 
