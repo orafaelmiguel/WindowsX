@@ -1,5 +1,12 @@
 # Windows 10 Gaming and Performance Optimizer
 
+> ⚠ **Warning:**   
+> These scripts modify system services, power settings, and hardware configurations.  
+> **If you are a beginner, do not run these scripts unless you fully understand the changes being made.**  
+> Misuse may lead to system instability or unexpected behavior.
+
+---
+
 This project aims to automate the configuration and optimization of Windows 10 for maximum FPS and gaming performance using shell scripts.
 
 The project is still under development and currently has the following features:
@@ -8,12 +15,36 @@ The project is still under development and currently has the following features:
 - Deactivation of useless services at boot time
 - XMP status checking in the BIOS
 - Deactivation of Windows hibernation
+- TCP/IP optmization
 
+## Network 
 
-> ⚠ **Warning:**   
-> These scripts modify system services, power settings, and hardware configurations.  
-> **If you are a beginner, do not run these scripts unless you fully understand the changes being made.**  
-> Misuse may lead to system instability or unexpected behavior.
+Optimization of TCP/IP protocols using `netsh`.
+
+- Increase the size of TCP buffers
+- Enables "ECN" (Explicit Congestion Notification) for reduced packet loss
+- Adjusts "RSS" (Receive Side Scaling) for better CPU usage
+- Disables "Nagle's Algorithm", reducing latency in games
+- Improves Windows Scaling Heuristics to optimize bandwidth
+- Adjust congestion window and other settings for lower latency
+
+These settings are advanced and may affect your network. If you experience problems, restore default settings with:
+```
+powershell.exe -Command "netsh int tcp reset"
+```
+
+## Windows Boot
+
+Maximum hardware performance and disabling of useless processes during boot.
+
+- Ensures all CPU cores are used at boot time
+- Faster startup and system responsiveness
+- Helps eliminate bottlenecks caused by Windows default settings
+- Better system stability, using manufacturer-tested memory profiles
+- Check BIOS and activate XAMP for higher RAM speeds
+- Disables unnecessary services to free up RAM and CPU at boot time
+- Less energy consumption and latency at boot time
+
 
 ## Disabled Services List
 
