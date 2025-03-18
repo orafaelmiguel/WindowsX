@@ -9,6 +9,12 @@ The project is still under development and currently has the following features:
 - XMP status checking in the BIOS
 - Deactivation of Windows hibernation
 
+
+> ⚠ **Warning:**   
+> These scripts modify system services, power settings, and hardware configurations.  
+> **If you are a beginner, do not run these scripts unless you fully understand the changes being made.**  
+> Misuse may lead to system instability or unexpected behavior.
+
 ## Disabled Services List
 
 Below is a list of unnecessary Windows services disabled by this optimization script.
