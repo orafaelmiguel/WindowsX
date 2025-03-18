@@ -8,5 +8,5 @@ XMP_STATUS=$(powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \
 if [[ "$XMP_STATUS" == "True" ]]; then
     echo "XMP is enabled."
 else
-    echo "MP is disabled!. Enable it in BIOS for better performance and run script again."
+    echo "XMP is disabled!. Enable it in BIOS for better performance and run script again."
 fi
