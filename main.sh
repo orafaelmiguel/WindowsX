@@ -5,48 +5,38 @@ echo "Starting Windows 10 Optimizer..."
 BOOT_DIR="./boot"
 
 SCRIPTS=(
-	"check_xmp.sh"
-	"disable_hibernation.sh"
-	"enable_all_cpu_cores.sh"
+	"boot/check_xmp.sh"
+	"boot/disable_hibernation.sh"
+	"boot/enable_all_cpu_cores.sh"
+	"boot/disable_services_boot.sh"
+	"network/tcp_ip_boost.sh"
 )
 
-SUCCESS_SCRIPTS=()
-FAILED_SCRIPTS=()
+SUCCESS=()
+FAILED=()
 
 for script in "${SCRIPTS[@]}"; do
-    SCRIPT_PATH="$BOOT_DIR/$script"
-
-    if [[ -f "$SCRIPT_PATH" ]]; then
-        echo "Running $script..."
-        bash "$SCRIPT_PATH"
-
-        if [[ $? -eq 0 ]]; then
-            SUCCESS_SCRIPTS+=("$script")
-            echo "Finished $script"
-        else
-            FAILED_SCRIPTS+=("$script")
-            echo "Error running $script"
-        fi
-    else
-        FAILED_SCRIPTS+=("$script")
-        echo "Script $script not found. Skipping..."
-    fi
-    echo "---------------------------------"
+  echo "Running $script..."
+  if sh "$script"; then
+    SUCCESS+=("$script")
+  else
+    FAILED+=("$script")
+  fi
 done
 
-echo "Optimization process completed."
-echo "---------------------------------"
-echo "Successfully executed scripts:"
-for script in "${SUCCESS_SCRIPTS[@]}"; do
-    echo "   - $script"
+echo "----------------------------------------"
+echo "Optimization Summary:"
+echo "✅ Successful Scripts:"
+for script in "${SUCCESS[@]}"; do
+  echo "  - $script"
 done
 
-echo ""
-echo "Failed scripts:"
-if [[ ${#FAILED_SCRIPTS[@]} -eq 0 ]]; then
-    echo "   None! All scripts ran successfully."
-else
-    for script in "${FAILED_SCRIPTS[@]}"; do
-        echo "   - $script"
-    done
+if [ ${#FAILED[@]} -ne 0 ]; then
+  echo "❌ Failed Scripts:"
+  for script in "${FAILED[@]}"; do
+    echo "  - $script"
+  done
 fi
+
+echo "Windows 10 Optimization Completed!"
+
