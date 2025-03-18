@@ -3,6 +3,8 @@
 Write-Output "Checking Drivers..."
 Write-Log "drivers.log" "Checking for driver updates..."
 
+Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+
 if (!(Get-Module -ListAvailable -Name PSWindowsUpdate)) {
   Write-Log "drivers.log" "Installing PSWindowsUpdate module..."
   Install-Module -Name PSWindowsUpdate -Force -AllowClobber
@@ -11,7 +13,7 @@ if (!(Get-Module -ListAvailable -Name PSWindowsUpdate)) {
 Import-Module PSWindowsUpdate
 
 Write-Log "drivers.log" "Enabling Windows Update for drivers..."
-Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+# Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
 
 Write-Log "drivers.log" "Listing available driver updates..."
 Get-WindowsUpdate -MicrosoftUpdate -Category "Drivers"
