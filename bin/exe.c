@@ -19,13 +19,11 @@ void logMessage(const char *message) {
 
 int isGitInstalled() {
     return (system("git --version > nul 2>&1") == 0);
-    // checking fucking git
-    // bro install git wtf
 }
 
 void runShellScript(const char *script) {
     char command[512];
-    sprintf(command, "C:\\Program Files\\Git\\bin\\bash.exe -c './%s'", script);
+    sprintf(command, "\"C:\\Program Files\\Git\\bin\\bash.exe\" -c './%s'", script);
     int result = system(command);
 
     if (result == 0) {
@@ -39,7 +37,7 @@ void runShellScript(const char *script) {
 
 void runPowerShellScript(const char *script) {
     char command[512];
-    sprintf(command, "C:\\Program Files\\Git\\bin\\bash.exe -c 'powershell -ExecutionPolicy Bypass -File ./%s'", script);
+    sprintf(command, "\"C:\\Program Files\\Git\\bin\\bash.exe\" -c 'powershell -ExecutionPolicy Bypass -File ./%s'", script);
     int result = system(command);
 
     if (result == 0) {
