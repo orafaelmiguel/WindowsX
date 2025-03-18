@@ -1,4 +1,4 @@
-# Windows 10 Tweak Tool 
+# Windows 10 Gaming and Performance Optimizer
 
 This project aims to automate the configuration and optimization of Windows 10 for maximum FPS and gaming performance using shell scripts.
 
@@ -63,6 +63,17 @@ Or you can just download the executable file of the scripts :)
 
 https://github.com/orafaelmiguel/Windows10-Gaming-Optimizer/releases/tag/v1.0.0
 
+## 🤝 Contributing
+
+If you'd like to help improve this project, follow these steps:
+
+1 - Click the "Fork" button at the top right of this repository to create your own copy.
+
+2 – Clone your forked repository to your local machine:
+```
+git clone https://github.com/orafaelmiguel/Windows10-Gaming-Optimizer.git
+```
+
 ## Contributors
 
 <table>
@@ -75,4 +86,3 @@ https://github.com/orafaelmiguel/Windows10-Gaming-Optimizer/releases/tag/v1.0.0
     </td>
   </tr>
 </table>
-
