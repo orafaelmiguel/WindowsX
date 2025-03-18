@@ -2,7 +2,6 @@
 
 This project aims to automate the configuration and optimization of Windows 10 for maximum FPS and gaming performance using shell scripts.
 
-
 The project is still under development and currently has the following features:
 
 - CPU optimization at boot time
@@ -39,16 +38,41 @@ Below is a list of unnecessary Windows services disabled by this optimization sc
 
 ## Installation
 
-1 - Clone this rep
+1 - To run scripts on Windows you'll have to set your Execution-Policy to Unrestricted, using the following command:
+
+From an Administrator Powershell prompt:
+```
+Set-ExecutionPolicy Unrestricted
+```
+
+2 - Clone this rep
 ```
 https://github.com/orafaelmiguel/Win10TweakTool.git
 cd Win10TweakTool
 ```
 
-2 - Install Git Bash in https://git-scm.com/downloads
+3 - Install Git Bash in https://git-scm.com/downloads
 
-3 - Run Git Bash as administrator in the cloned repository (or WSL btw):
+4 - Run Git Bash as administrator in the cloned repository (or WSL btw):
 ```
 chmod +x main.sh
 sh main.sh
 ```
+
+Or you can just download the executable file of the scripts :)
+
+https://github.com/orafaelmiguel/Windows10-Gaming-Optimizer/releases/tag/v1.0.0
+
+## Contributors
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/orafaelmiguel">
+        <img src="https://avatars.githubusercontent.com/u/96322592?v=4" width="100px;" alt="orafaelmiguel"/>
+        <br /><sub><b>orafaelmiguel</b></sub>
+      </a>
+    </td>
+  </tr>
+</table>
+
