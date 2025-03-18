@@ -10,3 +10,5 @@ if [[ "$XMP_STATUS" == "True" ]]; then
 else
     echo "XMP is disabled!. Enable it in BIOS for better performance and run script again."
 fi
+
+
