@@ -33,6 +33,23 @@ These settings are advanced and may affect your network. If you experience probl
 powershell.exe -Command "netsh int tcp reset"
 ```
 
+## Drivers Check and Update
+
+This optimizer includes an automated process to check for outdated drivers and update them using PowerShell.
+
+- Scans for outdated drivers using `Get-WindowsDriver` and `pnputil`
+- Retrieves the latest drivers from Windows Update.
+- Automatically installs updates for hardware components such as GPU, chipset, network adapters, and audio drivers.
+- Check for missing or outdated drivers.
+
+If an updated driver causes issues, you can roll back using:
+```
+pnputil /enum-drivers
+pnputil /delete-driver <driver_name.inf> /uninstall
+```
+
+GPU drivers (NVIDIA/AMD/Intel) should be updated through their official software for best results.
+
 ## Windows Boot
 
 Maximum hardware performance and disabling of useless processes during boot.
