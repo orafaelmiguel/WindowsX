@@ -108,15 +108,7 @@ cd Windows10-Gaming-Optimizer
 
 3 - Install Git Bash in https://git-scm.com/downloads
 
-4 - Run Git Bash as administrator in the cloned repository (or WSL btw):
-```
-chmod +x main.sh
-sh main.sh
-```
-
-Or you can just download the executable file of the scripts :)
-
-https://github.com/orafaelmiguel/Windows10-Gaming-Optimizer/releases/tag/v1.0.0
+4 - Run executable file :3 
 
 ## 🤝 Contributing
 
