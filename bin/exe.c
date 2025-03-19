@@ -109,7 +109,7 @@ int main() {
     runShellScript("./boot/disable_hibernation.sh");
     runShellScript("./boot/enable_all_cpu_cores.sh");
     runShellScript("./boot/disable_services_boot.sh");
-    runShellScript("./network/tcp_ip_boost.sh");
+    runShellScript("./network/tcp_ip_boost.ps1");
     runPowerShellScript("./powershell/update_drivers.ps1");
 
     logMessage("=== Optimization Process Completed ===");
