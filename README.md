@@ -91,6 +91,17 @@ Below is a list of unnecessary Windows services disabled by this optimization sc
 
 ⚠ **Note:** If you rely on any of these services, you may want to enable them manually after running the optimization script.
 
+## Intel Scripts
+
+Optimization scripts for Intel CPUs that aim to improve processor performance by adjusting settings related to frequency, voltage and power management.
+
+Separate executable file for optional use inside `/intel/bin/output`
+
+- Adjust CPU voltage to improve performance or reduce power consumption
+- Adjusts the CPU operating frequency to ensure that the processor operates at a constant and stable speed, avoiding clock jitter
+- Desabilita os C-states da CPU, o que impede que o processador entre em modos de baixa frequência
+- Installing Intel XTU for manual CPU optimization if you want to advance the optimization
+
 ## Installation
 
 1 - To run scripts on Windows you'll have to set your Execution-Policy to Unrestricted, using the following command:
