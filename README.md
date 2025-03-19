@@ -133,3 +133,7 @@ git clone https://github.com/orafaelmiguel/Windows10-Gaming-Optimizer.git
     </td>
   </tr>
 </table>
+
+Any questions or problems, contact me on Discord: itirafael
+
+Or Twitter: https://x.com/ginsengmiguel
