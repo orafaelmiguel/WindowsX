@@ -1,4 +1,4 @@
-# WindowsX
+# ⚡WindowsX
 
 > ⚠ **Warning:**   
 > These scripts modify system services, power settings, and hardware configurations.  
