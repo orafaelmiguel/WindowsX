@@ -28,7 +28,7 @@ void runAsAdmin() {
     GetModuleFileName(NULL, exePath, MAX_PATH);
 
     SHELLEXECUTEINFO sei = { sizeof(SHELLEXECUTEINFO) };
-    sei.lpVerb = "runas";  // Pede execução como administrador
+    sei.lpVerb = "runas"; //adm plz 
     sei.lpFile = exePath;
     sei.hwnd = NULL;
     sei.nShow = SW_NORMAL;
