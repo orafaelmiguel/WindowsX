@@ -1,3 +1,5 @@
+Write-Output "Adjust ACPI and energy..."
+
 $regPath = "HKLM:\SYSTEM\CurrentControlSet\Services\intelppm\Parameters"
 
 # disable energy CPU control
@@ -14,3 +16,5 @@ Set-ItemProperty -Path $regPath -Name "ActivePowerScheme" -Value "{8c5e7b9c-1f7e
 
 # {8c5e7b9c-1f7e-47a6-9d1e-470c51b9ef96} dont forget this shit
 # CPU high performance key
+
+Write-Output "ACPI and energy checked."
