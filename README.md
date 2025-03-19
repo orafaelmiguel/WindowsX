@@ -137,7 +137,7 @@ If you'd like to help improve this project, follow these steps:
 
 2 – Clone your forked repository to your local machine:
 ```
-git clone https://github.com/orafaelmiguel/Windows10-Gaming-Optimizer.git
+git clone https://github.com/orafaelmiguel/WindowsX.git
 ```
 
 ## Contributors
