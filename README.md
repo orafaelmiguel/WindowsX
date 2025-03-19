@@ -121,7 +121,7 @@ Set-ExecutionPolicy Unrestricted
 
 2 - Clone this rep
 ```
-git clone https://github.com/orafaelmiguel/Windows10-Gaming-Optimizer.git
+git clone https://github.com/orafaelmiguel/WindowsX.git
 cd Windows10-Gaming-Optimizer
 ```
 
