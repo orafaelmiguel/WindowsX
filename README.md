@@ -7,6 +7,14 @@
 
 ---
 
+1. [Network](#network)
+2. [Drivers Check and Update](#drivers-check-and-update)
+3. [Windows Boot](#windows-boot)
+   - [Disabled Services List](#disabled-services-list)
+5. [Intel Scripts](#intel-scripts)
+6. [Installation](#installation)
+7. [Contributing](#contributing)
+
 This project aims to automate the configuration and optimization of Windows 10 for maximum FPS and gaming performance using shell scripts.
 
 The project is still under development and currently has the following features:
