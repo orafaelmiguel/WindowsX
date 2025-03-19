@@ -16,6 +16,7 @@ The project is still under development and currently has the following features:
 - XMP status checking in the BIOS
 - Deactivation of Windows hibernation
 - TCP/IP optmization
+- Checking and updating drivers to the latest version
 
 ## Network 
 
