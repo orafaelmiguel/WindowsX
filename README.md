@@ -108,7 +108,6 @@ Separate executable file for optional use inside `/intel/bin/output`
 - Adjust CPU voltage to improve performance or reduce power consumption
 - Adjusts the CPU operating frequency to ensure that the processor operates at a constant and stable speed, avoiding clock jitter
 - Desabilita os C-states da CPU, o que impede que o processador entre em modos de baixa frequência
-- Installing Intel XTU for manual CPU optimization if you want to advance the optimization
 
 ## Installation
 
