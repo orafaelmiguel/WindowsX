@@ -78,7 +78,7 @@ int main() {
     runPowerShellScript(".././powershell/update_drivers.ps1");
 
     // dont forget, run for last because internet disconnect
-    runPowerShellScript("/./network/tcp_ip_boost.ps1");
+    runPowerShellScript(".././network/tcp_ip_boost.ps1");
 
     printf("Optimization completed! Check logs in 'logs/' folder.\n");
 
