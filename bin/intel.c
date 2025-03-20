@@ -42,30 +42,10 @@ void runAsAdmin() {
     exit(0);
 }
 
-void createLogDir() {
-    CreateDirectory(LOG_DIR, NULL);
-}
-
-void logMessage(const char *message) {
-    FILE *logFile = fopen(LOG_FILE, "a");
-    if (logFile) {
-        fprintf(logFile, "[%s] %s\n", __TIMESTAMP__, message);
-        fclose(logFile);
-    }
-}
-
 void runPowerShellScript(const char *script) {
     char command[512];
-    sprintf(command, "\"C:\\Program Files\\Git\\bin\\bash.exe\" -c 'powershell -ExecutionPolicy Bypass -File .\\intel\\bin\\%s'", script);
+    sprintf(command, "\"C:\\Program Files\\Git\\bin\\bash.exe\" -c 'powershell -ExecutionPolicy Bypass -File ./%s'", script);
     int result = system(command);
-
-    if (result == 0) {
-        logMessage("Executed successfully:");
-        logMessage(script);
-    } else {
-        logMessage("ERROR executing:");
-        logMessage(script);
-    }
 }
 
 int main() {
@@ -75,15 +55,11 @@ int main() {
     }
 
     printf("Starting Intel CPU Optimization...\n");
-    createLogDir();
-    logMessage("=== Starting Intel CPU Optimization Process ===");
 
-    runPowerShellScript("acpi_adjust.ps1");
-    runPowerShellScript("cpu_virtual_memory.ps1");
-    runPowerShellScript("disable_oscillations_clock.ps1");
-    runPowerShellScript("intel_get_xtu.ps1");
+    runPowerShellScript(".././intel/acpi_adjust.ps1");
+    runPowerShellScript(".././intel/cpu_virtual_memory.ps1");
+    runPowerShellScript(".././intel/disable_oscillations_clock.ps1");
 
-    logMessage("=== Intel CPU Optimization Process Completed ===");
     printf("Intel optimization completed! Check logs in 'logs/' folder.\n");
 
     system("pause");
