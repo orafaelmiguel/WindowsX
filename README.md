@@ -121,7 +121,7 @@ Set-ExecutionPolicy Unrestricted
 2 - Clone this rep
 ```
 git clone https://github.com/orafaelmiguel/WindowsX.git
-cd Windows10-Gaming-Optimizer
+cd WindowsX
 ```
 
 3 - Install Git Bash in https://git-scm.com/downloads
