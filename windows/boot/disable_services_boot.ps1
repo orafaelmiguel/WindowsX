@@ -1,4 +1,11 @@
-Write-Output "Disabling services on boot..."
+write-Host ""
+Write-Host "--------------------------------------------" -ForegroundColor Yellow
+Write-Host "Disabling services on boot..." -ForegroundColor Yellow
+Write-Host "--------------------------------------------" -ForegroundColor Yellow
+Write-Host ""
+Write-Host ""
+Write-Host ""
+Start-Sleep -Seconds 6
 
 $adminCheck = [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()
 if (-not $adminCheck.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
@@ -8,7 +15,7 @@ if (-not $adminCheck.IsInRole([Security.Principal.WindowsBuiltInRole]::Administr
 
 # disabled services
 $services = @(
-    'DiagTrack',
+    'DiagTrack', 
     'dmwappushservice',
     'SysMain', # if u use hdd, dont run
     'WSearch',
@@ -22,9 +29,19 @@ $services = @(
 )
 
 foreach ($service in $services) {
-    Write-Host "Disabling $service ..."
-    Stop-Service -Name $service -Force -ErrorAction SilentlyContinue
+    Write-Host "Disabling $service ..." -ForegroundColor Cyan
+    Stop-Service -Name $service -Force -ErrorAction SilentlyContinue 
     Set-Service -Name $service -StartupType Disabled
 }
+Write-Host ""
+Write-Host ""
+Write-Host ""
+Start-Sleep -Seconds 6
 
-Write-Host "All unnecessary services have been disabled!"
+Write-Host "********************************************" -ForegroundColor Green
+Write-Host "All unnecessary services have been disabled!" -ForegroundColor Green
+Write-Host "********************************************" -ForegroundColor Green
+Write-Host ""
+
+Write-Host "------------------------------------------------------------------------------------------------------------------" -ForegroundColor Magenta
+

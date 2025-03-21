@@ -1,22 +1,65 @@
-Write-Output "Checking Drivers..."
-Write-Output "drivers.log" "Checking for driver updates..."
+write-Host ""
+Write-Host "********************************************" -ForegroundColor Cyan
+Write-Host "Checking Drivers..." -ForegroundColor Cyan
+Write-Host "********************************************" -ForegroundColor Cyan
+Start-Sleep -Seconds 6
+Write-Host ""
+Write-Host ""
+Write-Host ""
+
+Write-Host "********************************************" -ForegroundColor Cyan
+Write-Host "drivers.log" "Checking for driver updates..." -ForegroundColor Cyan
+Write-Host "********************************************" -ForegroundColor Cyan
+Start-Sleep -Seconds 6
+Write-Host ""
+Write-Host ""
+Write-Host ""
+
 
 Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
 
 if (!(Get-Module -ListAvailable -Name PSWindowsUpdate)) {
-  Write-Output "Installing PSWindowsUpdate module..."
+  Write-Host "--------------------------------------------" -ForegroundColor Yellow
+  Write-Host "Installing PSWindowsUpdate module..." -ForegroundColor Yellow
+  Write-Host "--------------------------------------------" -ForegroundColor Yellow
+  Start-Sleep -Seconds 6
+  Write-Host ""
   Install-Module -Name PSWindowsUpdate -Force -AllowClobber
 }
+Write-Host ""
+Write-Host ""
+Write-Host ""
 
 Import-Module PSWindowsUpdate
 
-Write-Output "Enabling Windows Update for drivers..."
+Write-Host "--------------------------------------------" -ForegroundColor Yellow
+Write-Host "Enabling Windows Update for drivers..." -ForegroundColor Yellow
+Write-Host "--------------------------------------------" -ForegroundColor Yellow
+Start-Sleep -Seconds 6
+Write-Host ""
+Write-Host ""
+Write-Host ""
 # Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
 
-Write-Output "Listing available driver updates..."
+Write-Host "--------------------------------------------" -ForegroundColor Yellow
+Write-Host "Listing available driver updates..." -ForegroundColor Yellow
+Write-Host "--------------------------------------------" -ForegroundColor Yellow
 Get-WindowsUpdate -MicrosoftUpdate -Category "Drivers"
+Write-Host ""
+Write-Host ""
+Write-Host ""
 
-Write-Output "Installing driver updates..."
+Write-Host "--------------------------------------------" -ForegroundColor Yellow
+Write-Host "Installing driver updates..." -ForegroundColor Yellow
+Write-Host "--------------------------------------------" -ForegroundColor Yellow
+Write-Host ""
+Write-Host ""
+Write-Host ""
 Get-WindowsUpdate -MicrosoftUpdate -Category "Drivers" -AcceptAll -AutoReboot
 
-Write-Output "Driver update process completed successfully."
+Write-Host "********************************************" -ForegroundColor Green
+Write-Host "Driver update process completed successfully." -ForegroundColor Green
+Write-Host "********************************************" -ForegroundColor Green
+Write-Host ""
+
+Write-Host "------------------------------------------------------------------------------------------------------------------" -ForegroundColor Magenta

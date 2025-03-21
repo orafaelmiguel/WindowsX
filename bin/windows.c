@@ -53,12 +53,6 @@ void runPowerShellScript(const char *script) {
     char command[512];
     sprintf(command, "powershell -ExecutionPolicy Bypass -File \"./%s\"", script);
     int result = system(command);
-
-    if (result == 0) {
-        printf("Executed successfully: %s\n", script);
-    } else {
-        printf("ERROR executing: %s\n", script);
-    }
 }
 
 
@@ -68,7 +62,7 @@ int main() {
         runAsAdmin();
     }
 
-    printf("Starting Windows 10 Gaming Optimizer...\n");
+    printf("Starting Windows 10 Gaming Optimizer... :3n");
 
     if (!isGitInstalled()) {
         printf("ERROR: Git is not installed. Please install Git first.\n");
@@ -77,6 +71,7 @@ int main() {
 
     printf("Git found! Running optimizations...\n");
 
+    runPowerShellScript(".././windows/network/protocols.ps1");
     runPowerShellScript(".././windows/boot/check_xmp.ps1");
     runPowerShellScript(".././windows/boot/disable_hibernation.ps1");
     runPowerShellScript(".././windows/boot/enable_all_cpu_cores.ps1");
@@ -86,8 +81,6 @@ int main() {
 
     // dont forget, run for last because internet disconnect
     runPowerShellScript(".././windows/network/tcp_ip_boost.ps1");
-
-    printf("Optimization completed! Check logs in 'logs/' folder.\n");
 
     system("pause");
     return 0;
