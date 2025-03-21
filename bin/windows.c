@@ -61,8 +61,8 @@ int main() {
         printf("Requesting administrator privileges...\n");
         runAsAdmin();
     }
-    
-    printf("Starting Windows 10 Gaming Optimizer...\n");
+
+    printf("Starting Windows 10 Gaming Optimizer... :3n");
 
     if (!isGitInstalled()) {
         printf("ERROR: Git is not installed. Please install Git first.\n");
@@ -81,8 +81,6 @@ int main() {
 
     // dont forget, run for last because internet disconnect
     runPowerShellScript(".././windows/network/tcp_ip_boost.ps1");
-
-    printf("Optimization completed! Check logs in 'logs/' folder.\n");
 
     system("pause");
     return 0;
