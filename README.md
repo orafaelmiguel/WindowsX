@@ -47,9 +47,9 @@ powershell.exe -Command "netsh int tcp reset"
 This optimizer includes an automated process to check for outdated drivers and update them using PowerShell.
 
 - Scans for outdated drivers using `Get-WindowsDriver` and `pnputil`
+- Check for missing or outdated drivers.
 - Retrieves the latest drivers from Windows Update.
 - Automatically installs updates for hardware components such as GPU, chipset, network adapters, and audio drivers.
-- Check for missing or outdated drivers.
 
 If an updated driver causes issues, you can roll back using:
 ```
@@ -103,7 +103,7 @@ Below is a list of unnecessary Windows services disabled by this optimization sc
 
 Optimization scripts for Intel CPUs that aim to improve processor performance by adjusting settings related to frequency, voltage and power management.
 
-Separate executable file for optional use inside `/intel/bin/output`
+Separate executable file for optional use inside `/releases` folder.
 
 - Adjust CPU voltage to improve performance or reduce power consumption
 - Adjusts the CPU operating frequency to ensure that the processor operates at a constant and stable speed, avoiding clock jitter
@@ -124,9 +124,7 @@ git clone https://github.com/orafaelmiguel/WindowsX.git
 cd WindowsX
 ```
 
-3 - Install Git Bash in https://git-scm.com/downloads
-
-4 - Run executable file :3 
+4 - Run executable file inside `/releases` folder :3 
 
 ## 🤝 Contributing
 
