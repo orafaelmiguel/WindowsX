@@ -44,8 +44,14 @@ void runAsAdmin() {
 
 void runPowerShellScript(const char *script) {
     char command[512];
-    sprintf(command, "\"C:\\Program Files\\Git\\bin\\bash.exe\" -c 'powershell -ExecutionPolicy Bypass -File ./%s'", script);
+    sprintf(command, "powershell -ExecutionPolicy Bypass -File \"./%s\"", script);
     int result = system(command);
+
+    if (result == 0) {
+        printf("Executed successfully: %s\n", script);
+    } else {
+        printf("ERROR executing: %s\n", script);
+    }
 }
 
 int main() {

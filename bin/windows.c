@@ -51,9 +51,16 @@ void runShellScript(const char *script) {
 
 void runPowerShellScript(const char *script) {
     char command[512];
-    sprintf(command, "\"C:\\Program Files\\Git\\bin\\bash.exe\" -c 'powershell -ExecutionPolicy Bypass -File ./%s'", script);
+    sprintf(command, "powershell -ExecutionPolicy Bypass -File \"./%s\"", script);
     int result = system(command);
+
+    if (result == 0) {
+        printf("Executed successfully: %s\n", script);
+    } else {
+        printf("ERROR executing: %s\n", script);
+    }
 }
+
 
 int main() {
     if (!isRunningAsAdmin()) {
@@ -72,8 +79,8 @@ int main() {
 
     runPowerShellScript(".././windows/boot/check_xmp.ps1");
     runPowerShellScript(".././windows/boot/disable_hibernation.ps1");
-    runShellScript(".././windows/boot/enable_all_cpu_cores.sh");
-    runShellScript(".././windows/boot/disable_services_boot.sh");
+    runPowerShellScript(".././windows/boot/enable_all_cpu_cores.ps1");
+    runPowerShellScript(".././windows/boot/disable_services_boot.ps1");
     
     runPowerShellScript(".././windows/drivers/update_drivers.ps1");
 
