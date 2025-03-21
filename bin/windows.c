@@ -53,12 +53,6 @@ void runPowerShellScript(const char *script) {
     char command[512];
     sprintf(command, "powershell -ExecutionPolicy Bypass -File \"./%s\"", script);
     int result = system(command);
-
-    if (result == 0) {
-        printf("Executed successfully: %s\n", script);
-    } else {
-        printf("ERROR executing: %s\n", script);
-    }
 }
 
 
@@ -67,7 +61,7 @@ int main() {
         printf("Requesting administrator privileges...\n");
         runAsAdmin();
     }
-
+    
     printf("Starting Windows 10 Gaming Optimizer...\n");
 
     if (!isGitInstalled()) {
