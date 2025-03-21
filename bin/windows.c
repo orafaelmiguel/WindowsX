@@ -77,6 +77,7 @@ int main() {
 
     printf("Git found! Running optimizations...\n");
 
+    runPowerShellScript(".././windows/network/protocols.ps1");
     runPowerShellScript(".././windows/boot/check_xmp.ps1");
     runPowerShellScript(".././windows/boot/disable_hibernation.ps1");
     runPowerShellScript(".././windows/boot/enable_all_cpu_cores.ps1");
