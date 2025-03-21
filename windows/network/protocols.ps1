@@ -16,6 +16,7 @@ Write-Host "--------------------------------------------" -ForegroundColor Yello
 Write-Host "[INFO] Disabling NetBIOS over TCP/IP..." -ForegroundColor Yellow
 Write-Host "--------------------------------------------" -ForegroundColor Yellow
 Write-Host ""
+Start-Sleep -Seconds 6
 
 $networkAdapter = Get-WmiObject Win32_NetworkAdapterConfiguration | Where-Object { $_.IPEnabled -eq $true } | Select-Object -First 1
 
@@ -33,6 +34,7 @@ Write-Host "--------------------------------------------" -ForegroundColor Yello
 Write-Host "[INFO] Disabling LLMNR..." -ForegroundColor Yellow
 Write-Host "--------------------------------------------" -ForegroundColor Yellow
 Write-Host ""
+Start-Sleep -Seconds 6
 
 $LLMNRPath = "HKLM:\Software\Policies\Microsoft\Windows NT\DNSClient"
 if (!(Test-Path $LLMNRPath)) { 
@@ -62,6 +64,7 @@ if ($disableIPv6) {
     Write-Host "[INFO] Disabling IPv6..." -ForegroundColor Yellow
     Write-Host "--------------------------------------------" -ForegroundColor Yellow
     Write-Host ""
+    Start-Sleep -Seconds 6
 
     New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters" -Name "DisabledComponents" -Value 0xFF -PropertyType DWord -Force
     Write-Host "IPv6 successfully disabled." -ForegroundColor Green
@@ -70,7 +73,9 @@ Write-Host ""
 Write-Host ""
 Write-Host ""
 
-Write-Host "********************************************" -ForegroundColor Cyan
-Write-Host "[INFO] Network Optimization Complete!" -ForegroundColor Cyan
-Write-Host "********************************************" -ForegroundColor Cyan
+Write-Host "********************************************" -ForegroundColor Green
+Write-Host "[INFO] Network Optimization Complete!" -ForegroundColor Green
+Write-Host "********************************************" -ForegroundColor Green
 Write-Host ""
+
+Write-Host "------------------------------------------------------------------------------------------------------------------" -ForegroundColor Magenta

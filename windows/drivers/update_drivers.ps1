@@ -1,6 +1,7 @@
 Write-Host "********************************************" -ForegroundColor Cyan
 Write-Host "Checking Drivers..." -ForegroundColor Cyan
 Write-Host "********************************************" -ForegroundColor Cyan
+Start-Sleep -Seconds 6
 Write-Host ""
 Write-Host ""
 Write-Host ""
@@ -8,6 +9,7 @@ Write-Host ""
 Write-Host "********************************************" -ForegroundColor Cyan
 Write-Host "drivers.log" "Checking for driver updates..." -ForegroundColor Cyan
 Write-Host "********************************************" -ForegroundColor Cyan
+Start-Sleep -Seconds 6
 Write-Host ""
 Write-Host ""
 Write-Host ""
@@ -19,17 +21,20 @@ if (!(Get-Module -ListAvailable -Name PSWindowsUpdate)) {
   Write-Host "--------------------------------------------" -ForegroundColor Yellow
   Write-Host "Installing PSWindowsUpdate module..." -ForegroundColor Yellow
   Write-Host "--------------------------------------------" -ForegroundColor Yellow
-  Write-Host ""
-  Write-Host ""
+  Start-Sleep -Seconds 6
   Write-Host ""
   Install-Module -Name PSWindowsUpdate -Force -AllowClobber
 }
+Write-Host ""
+Write-Host ""
+Write-Host ""
 
 Import-Module PSWindowsUpdate
 
 Write-Host "--------------------------------------------" -ForegroundColor Yellow
 Write-Host "Enabling Windows Update for drivers..." -ForegroundColor Yellow
 Write-Host "--------------------------------------------" -ForegroundColor Yellow
+Start-Sleep -Seconds 6
 Write-Host ""
 Write-Host ""
 Write-Host ""
@@ -55,3 +60,5 @@ Write-Host "********************************************" -ForegroundColor Green
 Write-Host "Driver update process completed successfully." -ForegroundColor Green
 Write-Host "********************************************" -ForegroundColor Green
 Write-Host ""
+
+Write-Host "------------------------------------------------------------------------------------------------------------------" -ForegroundColor Magenta
