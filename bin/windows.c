@@ -70,15 +70,15 @@ int main() {
 
     printf("Git found! Running optimizations...\n");
 
-    runShellScript(".././windows//boot/check_xmp.sh");
-    runShellScript(".././windows//boot/disable_hibernation.sh");
-    runShellScript(".././windows//boot/enable_all_cpu_cores.sh");
-    runShellScript(".././windows//boot/disable_services_boot.sh");
+    runShellScript(".././windows/boot/check_xmp.sh");
+    runShellScript(".././windows/boot/disable_hibernation.sh");
+    runShellScript(".././windows/boot/enable_all_cpu_cores.sh");
+    runShellScript(".././windows/boot/disable_services_boot.sh");
     
-    runPowerShellScript(".././powershell/update_drivers.ps1");
+    runPowerShellScript(".././windows/drivers/update_drivers.ps1");
 
     // dont forget, run for last because internet disconnect
-    runPowerShellScript(".././windows//network/tcp_ip_boost.ps1");
+    runPowerShellScript(".././windows/network/tcp_ip_boost.ps1");
 
     printf("Optimization completed! Check logs in 'logs/' folder.\n");
 
