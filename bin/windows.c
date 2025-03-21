@@ -70,8 +70,8 @@ int main() {
 
     printf("Git found! Running optimizations...\n");
 
-    runShellScript(".././windows/boot/check_xmp.sh");
-    runShellScript(".././windows/boot/disable_hibernation.sh");
+    runPowerShellScript(".././windows/boot/check_xmp.ps1");
+    runPowerShellScript(".././windows/boot/disable_hibernation.ps1");
     runShellScript(".././windows/boot/enable_all_cpu_cores.sh");
     runShellScript(".././windows/boot/disable_services_boot.sh");
     
