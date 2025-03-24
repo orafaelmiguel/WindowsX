@@ -37,6 +37,13 @@ Optimization of TCP/IP protocols using `netsh`.
 - Improves Windows Scaling Heuristics to optimize bandwidth
 - Adjust congestion window and other settings for lower latency
 
+Disabling some unnecessary and insecure network protocols
+
+- Disables NetBIOS over TCP/IP
+- Disables LLMNR, which can be exploited by attackers to capture NTLM credentials via spoofing attacks
+- Disables SMBv1, a file sharing protocol that is heavily exploited by hacker attacks
+- Optionally disable IPv6, if you don't want to disable Ipv6, just add a comment in the execution line inside the script :)
+
 These settings are advanced and may affect your network. If you experience problems, restore default settings with:
 ```
 powershell.exe -Command "netsh int tcp reset"
