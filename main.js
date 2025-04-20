@@ -11,10 +11,13 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
-    }
+    },
+    autoHideMenuBar: true,
+    frame: true,
   });
 
   mainWindow.loadFile('index.html');
+  mainWindow.setMenu(null);
   //devtools
   // mainWindow.webContents.openDevTools();
 }
