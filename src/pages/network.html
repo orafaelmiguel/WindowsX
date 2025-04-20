@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>WindowsX - Drivers Optimization</title>
+    <title>WindowsX - Network Optimization</title>
     <style>
         :root {
             /* Light Theme */
@@ -274,7 +274,6 @@
             cursor: pointer;
             transition: background-color 0.2s;
             width: 100%;
-            font-weight: 500;
         }
 
         .run-button:hover {
@@ -386,23 +385,23 @@
             <p>Optimization Suite</p>
         </div>
         <nav>
-            <a href="#" class="nav-item" onclick="navigateTo('index.html')">
+            <a href="index.html" class="nav-item">
                 <i class="fas fa-home"></i>
                 <span>Home</span>
             </a>
-            <a href="#" class="nav-item" onclick="navigateTo('network.html')">
+            <a href="network.html" class="nav-item active">
                 <i class="fas fa-network-wired"></i>
                 <span>Network</span>
             </a>
-            <a href="#" class="nav-item" onclick="navigateTo('boot.html')">
+            <a href="boot.html" class="nav-item">
                 <i class="fas fa-bolt"></i>
                 <span>Boot</span>
             </a>
-            <a href="#" class="nav-item active" onclick="navigateTo('drivers.html')">
+            <a href="drivers.html" class="nav-item">
                 <i class="fas fa-microchip"></i>
                 <span>Drivers</span>
             </a>
-            <a href="#" class="nav-item" onclick="navigateTo('settings.html')">
+            <a href="settings.html" class="nav-item" >
                 <i class="fas fa-cog"></i>
                 <span>Settings</span>
             </a>
@@ -411,15 +410,21 @@
 
     <div class="main-content">
         <div class="page-header">
-            <h1>Drivers Optimization</h1>
-            <p>Keep your system drivers up to date and optimized</p>
+            <h1>Network Optimization</h1>
+            <p>Optimize your network settings for better connectivity and performance</p>
         </div>
 
         <div class="script-list">
             <div class="script-card">
-                <h3>Update System Drivers</h3>
-                <p>Check and update all system drivers to their latest versions.</p>
-                <button class="run-button" onclick="runScript('windows/drivers/update_drivers.ps1', 'Update System Drivers', 'Checking and updating system drivers...')">Run Script</button>
+                <h3>TCP/IP Optimization</h3>
+                <p>Optimize your network settings for better performance.</p>
+                <button class="run-button" onclick="runScript('windows/network/tcp_ip_boost.ps1', 'TCP/IP Optimization', 'Optimizing network settings for better performance...')">Run Script</button>
+            </div>
+
+            <div class="script-card">
+                <h3>Network Protocols</h3>
+                <p>Optimize network protocols for improved connectivity.</p>
+                <button class="run-button" onclick="runScript('windows/network/protocols.ps1', 'Network Protocols', 'Optimizing network protocols for better connectivity...')">Run Script</button>
             </div>
         </div>
 
@@ -492,7 +497,7 @@
                 scriptPath: scriptPath,
                 title: title,
                 description: description,
-                previousPage: 'drivers.html'
+                previousPage: 'network.html'
             });
         }
 
@@ -540,6 +545,19 @@
             }
             
             addOutputLine(`Script completed with exit code: ${code}`);
+        });
+
+        document.getElementById('runTcpIpBoost').addEventListener('click', () => {
+            runScript('windows/network/tcp_ip_boost.ps1', 'TCP/IP Optimization', 'Optimizing network settings for better performance...');
+        });
+
+        // Navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = e.target.getAttribute('data-page');
+                ipcRenderer.send('navigate-to', page);
+            });
         });
     </script>
 </body>

@@ -2,10 +2,10 @@
   "name": "WindowsX",
   "version": "1.0.0",
   "description": "Aplicativo desktop para otimização do Windows 10",
-  "main": "main.js",
+  "main": "src/main.js",
   "scripts": {
-    "start": "electron .",
-    "build": "electron-builder --win --publish always"
+    "start": "electron src/main.js",
+    "build": "electron-builder --win"
   },
   "repository": {
     "type": "git",
@@ -35,12 +35,9 @@
       "target": []
     },
     "files": [
-      "**/*",
-      "*.ps1",
-      "windows/**/*.ps1",
-      "windows/boot/*.ps1",
-      "windows/drivers/*.ps1",
-      "windows/network/*.ps1",
+      "src/**/*",
+      "public/**/*",
+      "windows/**/*",
       "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
       "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
       "!**/node_modules/*.d.ts",
@@ -53,13 +50,13 @@
     ],
     "extraResources": [
       {
-        "from": "./",
-        "filter": ["*.ps1"]
+        "from": "src",
+        "filter": ["*.ps1"],
+        "to": "."
       },
       {
         "from": "windows",
-        "to": "windows",
-        "filter": ["**/*.ps1"]
+        "to": "windows"
       }
     ],
     "asar": false

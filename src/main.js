@@ -71,14 +71,14 @@ function createWindow() {
     },
     autoHideMenuBar: true,
     frame: true,
-    icon: path.join(__dirname, 'public', 'icon.png')
+    icon: path.join(__dirname, '..', 'public', 'icon.png')
   });
 
   if (currentSettings.startFullscreen) {
     mainWindow.maximize();
   }
 
-  mainWindow.loadFile('index.html');
+  mainWindow.loadFile(path.join(__dirname, 'pages', 'index.html'));
   mainWindow.setMenu(null);
   //devtools
   // mainWindow.webContents.openDevTools();
@@ -131,10 +131,10 @@ function createSettingsWindow() {
     frame: true,
     title: 'WindowsX - Settings',
     show: false, // Don't show until ready
-    icon: path.join(__dirname, 'public', 'icon.png')
+    icon: path.join(__dirname, '..', 'public', 'icon.png')
   });
 
-  settingsWindow.loadFile('settings.html');
+  settingsWindow.loadFile(path.join(__dirname, 'pages', 'settings.html'));
   // settingsWindow.webContents.openDevTools();
 
   // Show window when ready to avoid flashing
@@ -200,7 +200,7 @@ ipcMain.on('navigate-to', (event, page) => {
   if (page === 'settings.html') {
     createSettingsWindow();
   } else {
-    mainWindow.loadFile(page);
+    mainWindow.loadFile(path.join(__dirname, 'pages', page));
   }
 });
 
@@ -213,7 +213,7 @@ ipcMain.on('run-script', (event, { scriptPath, title, description, previousPage 
     previousPage: previousPage || 'index.html'
   });
   
-  mainWindow.loadFile('script_runner.html', {
+  mainWindow.loadFile(path.join(__dirname, 'pages', 'script_runner.html'), {
     search: params.toString()
   });
 });
@@ -221,31 +221,65 @@ ipcMain.on('run-script', (event, { scriptPath, title, description, previousPage 
 // Handle script execution with admin privileges
 ipcMain.on('run-powershell-script', (event, scriptPath) => {
   // Get the absolute paths
-  // Use extraResources path for PS1 files
   const isPackaged = app.isPackaged;
   
   let absoluteScriptPath;
   let runAsAdminPath;
   
+  // Resolver os caminhos de forma mais robusta
+  const appRoot = path.resolve(path.join(__dirname, '..'));
+  console.log('App Root Directory:', appRoot);
+  
+  // Normalizar o caminho do script (remover qualquer ../ ou ./ desnecessário)
+  const normalizedScriptPath = scriptPath.replace(/^\.\.\/\.\.\//, '').replace(/^\.\.\//, '');
+  console.log('Normalized Script Path:', normalizedScriptPath);
+  
   if (isPackaged) {
     // When running in packaged app, use the extraResources path
     const resourcesPath = process.resourcesPath;
-    // If scriptPath starts with 'windows/', maintain that structure
-    if (scriptPath.startsWith('windows/')) {
-      absoluteScriptPath = path.join(resourcesPath, scriptPath);
-    } else {
-      absoluteScriptPath = path.join(resourcesPath, scriptPath);
-    }
+    absoluteScriptPath = path.join(resourcesPath, normalizedScriptPath);
     runAsAdminPath = path.join(resourcesPath, 'run_as_admin.ps1');
   } else {
-    // When running in development
-    absoluteScriptPath = path.resolve(__dirname, scriptPath);
-    runAsAdminPath = path.resolve(__dirname, 'run_as_admin.ps1');
+    // When running in development mode
+    absoluteScriptPath = path.join(appRoot, normalizedScriptPath);
+    runAsAdminPath = path.join(__dirname, 'run_as_admin.ps1');
   }
   
   console.log('App is packaged:', isPackaged);
-  console.log('Script Path:', absoluteScriptPath);
+  console.log('Full Script Path:', absoluteScriptPath);
   console.log('Run As Admin Path:', runAsAdminPath);
+  
+  // Mostrar quais arquivos existem no diretório
+  try {
+    const dir = path.dirname(absoluteScriptPath);
+    console.log('Diretório do script:', dir);
+    if (fs.existsSync(dir)) {
+      console.log('Conteúdo do diretório:');
+      const files = fs.readdirSync(dir);
+      files.forEach(file => {
+        console.log(`- ${file}`);
+      });
+    } else {
+      console.log('Diretório não encontrado:', dir);
+    }
+  } catch (error) {
+    console.error('Erro ao listar diretório:', error);
+  }
+  
+  // Verify if files exist before running
+  if (!fs.existsSync(absoluteScriptPath)) {
+    const errorMsg = `Error: Script file not found at ${absoluteScriptPath}`;
+    console.error(errorMsg);
+    mainWindow.webContents.send('script-output', errorMsg);
+    return;
+  }
+  
+  if (!fs.existsSync(runAsAdminPath)) {
+    const errorMsg = `Error: Admin script not found at ${runAsAdminPath}`;
+    console.error(errorMsg);
+    mainWindow.webContents.send('script-output', errorMsg);
+    return;
+  }
   
   const powershell = spawn('powershell.exe', [
     '-NoProfile',
