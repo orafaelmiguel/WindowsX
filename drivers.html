@@ -198,6 +198,7 @@
             cursor: pointer;
             transition: background-color 0.2s;
             width: 100%;
+            font-weight: 500;
         }
 
         .run-button:hover {
@@ -307,40 +308,14 @@
     <div class="main-content">
         <div class="page-header">
             <h1>Drivers Optimization</h1>
-            <p>Optimize your device drivers for better performance and stability</p>
+            <p>Keep your system drivers up to date and optimized</p>
         </div>
 
         <div class="script-list">
             <div class="script-card">
-                <h3>Update Drivers</h3>
-                <p>Automatically update all outdated drivers to their latest versions</p>
-                <button class="run-button" onclick="runScript('windows/drivers/update_drivers.ps1')">Run Update</button>
-            </div>
-            <div class="script-card">
-                <h3>Clean Old Drivers</h3>
-                <p>Remove old and unused driver files to free up disk space</p>
-                <button class="run-button" onclick="runScript('windows/drivers/clean_drivers.ps1')">Run Cleanup</button>
-            </div>
-            <div class="script-card">
-                <h3>Backup Drivers</h3>
-                <p>Create a backup of all current drivers for system recovery</p>
-                <button class="run-button" onclick="runScript('windows/drivers/backup_drivers.ps1')">Run Backup</button>
-            </div>
-        </div>
-
-        <div class="loading" id="loading">
-            <div class="loading-spinner"></div>
-            Running optimization script...
-        </div>
-
-        <div class="success-message" id="success-message">
-            <i class="fas fa-check-circle"></i>
-            Optimization completed successfully!
-        </div>
-
-        <div class="logs-section" id="logs-section">
-            <h3>Optimization Logs</h3>
-            <div class="output-container" id="output">
+                <h3>Update System Drivers</h3>
+                <p>Check and update all system drivers to their latest versions.</p>
+                <button class="run-button" onclick="runScript('windows/drivers/update_drivers.ps1', 'Update System Drivers', 'Checking and updating system drivers...')">Run Script</button>
             </div>
         </div>
     </div>
@@ -352,18 +327,13 @@
             ipcRenderer.send('navigate-to', page);
         }
         
-        function runScript(scriptPath) {
-            const output = document.getElementById('output');
-            const loading = document.getElementById('loading');
-            const successMessage = document.getElementById('success-message');
-            const logsSection = document.getElementById('logs-section');
-            
-            output.innerHTML = '';
-            loading.style.display = 'block';
-            successMessage.style.display = 'none';
-            logsSection.style.display = 'none';
-            
-            ipcRenderer.send('run-powershell-script', scriptPath);
+        function runScript(scriptPath, title, description) {
+            ipcRenderer.send('run-script', {
+                scriptPath: scriptPath,
+                title: title,
+                description: description,
+                previousPage: 'drivers.html'
+            });
         }
 
         function addOutputLine(text, type = 'info') {

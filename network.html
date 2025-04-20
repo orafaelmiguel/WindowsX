@@ -313,8 +313,8 @@
         <div class="script-list">
             <div class="script-card">
                 <h3>TCP/IP Optimization</h3>
-                <p>Optimizes TCP/IP network settings for better connectivity and speed</p>
-                <button class="run-button" onclick="runScript('windows/network/tcp_ip_boost.ps1')">Run Optimization</button>
+                <p>Optimize your network settings for better performance.</p>
+                <button id="runTcpIpBoost" class="run-button">Run TCP/IP Boost</button>
             </div>
         </div>
 
@@ -342,18 +342,13 @@
             ipcRenderer.send('navigate-to', page);
         }
         
-        function runScript(scriptPath) {
-            const output = document.getElementById('output');
-            const loading = document.getElementById('loading');
-            const successMessage = document.getElementById('success-message');
-            const logsSection = document.getElementById('logs-section');
-            
-            output.innerHTML = '';
-            loading.style.display = 'block';
-            successMessage.style.display = 'none';
-            logsSection.style.display = 'none';
-            
-            ipcRenderer.send('run-powershell-script', scriptPath);
+        function runScript(scriptPath, title, description) {
+            ipcRenderer.send('run-script', {
+                scriptPath: scriptPath,
+                title: title,
+                description: description,
+                previousPage: 'network.html'
+            });
         }
 
         function addOutputLine(text, type = 'info') {
@@ -400,6 +395,19 @@
             }
             
             addOutputLine(`Script completed with exit code: ${code}`);
+        });
+
+        document.getElementById('runTcpIpBoost').addEventListener('click', () => {
+            runScript('windows/network/tcp_ip_boost.ps1', 'TCP/IP Optimization', 'Optimizing network settings for better performance...');
+        });
+
+        // Navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = e.target.getAttribute('data-page');
+                ipcRenderer.send('navigate-to', page);
+            });
         });
     </script>
 </body>

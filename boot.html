@@ -198,6 +198,7 @@
             cursor: pointer;
             transition: background-color 0.2s;
             width: 100%;
+            font-weight: 500;
         }
 
         .run-button:hover {
@@ -307,32 +308,32 @@
     <div class="main-content">
         <div class="page-header">
             <h1>Boot Optimization</h1>
-            <p>Optimize your Windows startup process for faster boot times and better performance</p>
+            <p>Optimize your system's boot time and performance</p>
         </div>
 
         <div class="script-list">
             <div class="script-card">
-                <h3>Basic Boot Optimization</h3>
-                <p>Optimizes basic Windows startup settings for faster boot times</p>
-                <button class="run-button" onclick="runScript('windows/boot/basic_optimize.ps1')">Run Optimization</button>
+                <h3>Enable All CPU Cores</h3>
+                <p>Ensure all CPU cores are enabled during boot for maximum performance.</p>
+                <button class="run-button" onclick="runScript('windows/boot/enable_all_cpu_cores.ps1', 'Enable All CPU Cores', 'Enabling all CPU cores for maximum performance...')">Run Script</button>
             </div>
-            
+
             <div class="script-card">
-                <h3>Advanced Boot Optimization</h3>
-                <p>Complete optimization with advanced startup adjustments</p>
-                <button class="run-button" onclick="runScript('windows/boot/advanced_optimize.ps1')">Run Optimization</button>
+                <h3>Disable Unnecessary Services</h3>
+                <p>Optimize boot time by disabling unnecessary startup services.</p>
+                <button class="run-button" onclick="runScript('windows/boot/disable_services_boot.ps1', 'Disable Unnecessary Services', 'Optimizing startup services for faster boot...')">Run Script</button>
             </div>
-            
+
             <div class="script-card">
-                <h3>Boot Services Optimization</h3>
-                <p>Optimizes services that start with Windows for better performance</p>
-                <button class="run-button" onclick="runScript('windows/boot/services_optimize.ps1')">Run Optimization</button>
+                <h3>Check XMP Profile</h3>
+                <p>Verify and optimize RAM XMP profile settings for better performance.</p>
+                <button class="run-button" onclick="runScript('windows/boot/check_xmp.ps1', 'Check XMP Profile', 'Checking and optimizing RAM XMP profile settings...')">Run Script</button>
             </div>
-            
+
             <div class="script-card">
-                <h3>Boot Drivers Optimization</h3>
-                <p>Optimizes drivers that load during startup</p>
-                <button class="run-button" onclick="runScript('windows/boot/drivers_optimize.ps1')">Run Optimization</button>
+                <h3>Disable Hibernation</h3>
+                <p>Disable hibernation to improve boot time and free up disk space.</p>
+                <button class="run-button" onclick="runScript('windows/boot/disable_hibernation.ps1', 'Disable Hibernation', 'Disabling hibernation for faster boot times...')">Run Script</button>
             </div>
         </div>
 
@@ -360,18 +361,13 @@
             ipcRenderer.send('navigate-to', page);
         }
         
-        function runScript(scriptPath) {
-            const output = document.getElementById('output');
-            const loading = document.getElementById('loading');
-            const successMessage = document.getElementById('success-message');
-            const logsSection = document.getElementById('logs-section');
-            
-            output.innerHTML = '';
-            loading.style.display = 'block';
-            successMessage.style.display = 'none';
-            logsSection.style.display = 'none';
-            
-            ipcRenderer.send('run-powershell-script', scriptPath);
+        function runScript(scriptPath, title, description) {
+            ipcRenderer.send('run-script', {
+                scriptPath: scriptPath,
+                title: title,
+                description: description,
+                previousPage: 'boot.html'
+            });
         }
 
         function addOutputLine(text, type = 'info') {

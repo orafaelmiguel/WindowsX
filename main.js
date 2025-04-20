@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
-const { spawn } = require('child_process');
 const path = require('path');
+const { spawn } = require('child_process');
 
 let mainWindow;
 
@@ -33,38 +33,60 @@ app.on('activate', () => {
   }
 });
 
+// Handle navigation
 ipcMain.on('navigate-to', (event, page) => {
   mainWindow.loadFile(page);
 });
 
+// Handle script execution
+ipcMain.on('run-script', (event, { scriptPath, title, description, previousPage }) => {
+  const params = new URLSearchParams({
+    scriptPath: scriptPath,
+    title: title,
+    description: description,
+    previousPage: previousPage || 'index.html'
+  });
+  
+  mainWindow.loadFile('script_runner.html', {
+    search: params.toString()
+  });
+});
+
+// Handle script execution with admin privileges
 ipcMain.on('run-powershell-script', (event, scriptPath) => {
-  const adminScriptPath = path.join(__dirname, 'run_as_admin.ps1');
-  const absoluteScriptPath = path.resolve(scriptPath);
+  // Get the absolute paths
+  const absoluteScriptPath = path.resolve(__dirname, scriptPath);
+  const runAsAdminPath = path.resolve(__dirname, 'run_as_admin.ps1');
+  
+  console.log('Script Path:', absoluteScriptPath);
+  console.log('Run As Admin Path:', runAsAdminPath);
   
   const powershell = spawn('powershell.exe', [
+    '-NoProfile',
     '-ExecutionPolicy', 'Bypass',
-    '-File', adminScriptPath,
+    '-File', runAsAdminPath,
     '-ScriptPath', absoluteScriptPath
   ]);
-  
+
   powershell.stdout.on('data', (data) => {
-    const output = data.toString();
-    if (output.includes('SCRIPT_COMPLETED')) {
-      mainWindow.webContents.send('script-complete', 0);
-    } else if (output.includes('SCRIPT_FAILED')) {
-      mainWindow.webContents.send('script-error', 'O script falhou ao executar');
-    } else {
+    const output = data.toString().trim();
+    if (output) {
       mainWindow.webContents.send('script-output', output);
     }
   });
 
   powershell.stderr.on('data', (data) => {
-    mainWindow.webContents.send('script-error', data.toString());
+    const error = data.toString().trim();
+    if (error) {
+      mainWindow.webContents.send('script-output', error);
+    }
   });
 
   powershell.on('close', (code) => {
-    if (code !== 0) {
-      mainWindow.webContents.send('script-error', `Processo encerrado com código ${code}`);
+    if (code === 0) {
+      mainWindow.webContents.send('script-completed');
+    } else {
+      mainWindow.webContents.send('script-output', `Script failed with exit code: ${code}`);
     }
   });
 }); 

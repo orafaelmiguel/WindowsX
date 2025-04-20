@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Script Runner - WindowsX Optimization Suite</title>
+    <style>
+        :root {
+            --primary-color: #e11d48;
+            --background-color: #ffffff;
+            --text-color: #333333;
+            --card-background: #f5f5f5;
+            --border-color: #e0e0e0;
+            --success-color: #4caf50;
+            --error-color: #f44336;
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #0078d4;
+            --background-color: #1e1e1e;
+            --text-color: #ffffff;
+            --card-background: #2d2d2d;
+            --border-color: #404040;
+            --success-color: #4caf50;
+            --error-color: #f44336;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .back-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .back-button:hover {
+            opacity: 0.9;
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .title {
+            font-size: 24px;
+            margin: 0 0 10px 0;
+        }
+
+        .description {
+            color: var(--text-color);
+            opacity: 0.8;
+            margin: 0 0 20px 0;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .spinner {
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 3px solid var(--primary-color);
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .logs {
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 10px;
+            height: 300px;
+            overflow-y: auto;
+            font-family: 'Consolas', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+
+        .log-line {
+            margin: 0;
+            padding: 2px 0;
+        }
+
+        .log-line.error {
+            color: var(--error-color);
+        }
+
+        .success-message {
+            color: var(--success-color);
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="back-button" id="backButton">Back</button>
+        </div>
+
+        <div class="card">
+            <h1 class="title" id="scriptTitle">Loading...</h1>
+            <p class="description" id="scriptDescription">Loading...</p>
+            
+            <div class="loading" id="loadingIndicator">
+                <div class="spinner"></div>
+                <span>Running script...</span>
+            </div>
+
+            <div class="logs" id="logs"></div>
+            <p class="success-message" id="successMessage" style="display: none;">Script completed successfully!</p>
+        </div>
+    </div>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        // Get script details from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const scriptPath = urlParams.get('scriptPath');
+        const title = urlParams.get('title');
+        const description = urlParams.get('description');
+
+        // Update UI with script details
+        document.getElementById('scriptTitle').textContent = title;
+        document.getElementById('scriptDescription').textContent = description;
+
+        // Handle back button
+        document.getElementById('backButton').addEventListener('click', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const previousPage = urlParams.get('previousPage') || 'index.html';
+            ipcRenderer.send('navigate-to', previousPage);
+        });
+
+        // Handle script output
+        ipcRenderer.on('script-output', (event, data) => {
+            const logs = document.getElementById('logs');
+            const line = document.createElement('p');
+            line.className = 'log-line';
+            line.textContent = data;
+            logs.appendChild(line);
+            logs.scrollTop = logs.scrollHeight;
+        });
+
+        // Handle script completion
+        ipcRenderer.on('script-completed', () => {
+            document.getElementById('loadingIndicator').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'block';
+        });
+
+        // Start script execution
+        ipcRenderer.send('run-powershell-script', scriptPath);
+    </script>
+</body>
+</html> 
