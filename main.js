@@ -221,9 +221,29 @@ ipcMain.on('run-script', (event, { scriptPath, title, description, previousPage 
 // Handle script execution with admin privileges
 ipcMain.on('run-powershell-script', (event, scriptPath) => {
   // Get the absolute paths
-  const absoluteScriptPath = path.resolve(__dirname, scriptPath);
-  const runAsAdminPath = path.resolve(__dirname, 'run_as_admin.ps1');
+  // Use extraResources path for PS1 files
+  const isPackaged = app.isPackaged;
   
+  let absoluteScriptPath;
+  let runAsAdminPath;
+  
+  if (isPackaged) {
+    // When running in packaged app, use the extraResources path
+    const resourcesPath = process.resourcesPath;
+    // If scriptPath starts with 'windows/', maintain that structure
+    if (scriptPath.startsWith('windows/')) {
+      absoluteScriptPath = path.join(resourcesPath, scriptPath);
+    } else {
+      absoluteScriptPath = path.join(resourcesPath, scriptPath);
+    }
+    runAsAdminPath = path.join(resourcesPath, 'run_as_admin.ps1');
+  } else {
+    // When running in development
+    absoluteScriptPath = path.resolve(__dirname, scriptPath);
+    runAsAdminPath = path.resolve(__dirname, 'run_as_admin.ps1');
+  }
+  
+  console.log('App is packaged:', isPackaged);
   console.log('Script Path:', absoluteScriptPath);
   console.log('Run As Admin Path:', runAsAdminPath);
   
