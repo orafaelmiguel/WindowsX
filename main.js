@@ -1,8 +1,60 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, globalShortcut } = require('electron');
 const path = require('path');
 const { spawn } = require('child_process');
+const fs = require('fs');
+const { electron } = require('process');
+
+// Settings file path
+const userDataPath = app.getPath('userData');
+const settingsPath = path.join(userDataPath, 'settings.json');
+
+// Default settings
+const defaultSettings = {
+  darkTheme: false,
+  startFullscreen: true,
+  runAtStartup: false
+};
 
 let mainWindow;
+let settingsWindow = null;
+
+// Load settings
+function loadSettings() {
+  try {
+    if (fs.existsSync(settingsPath)) {
+      const data = fs.readFileSync(settingsPath, 'utf8');
+      return { ...defaultSettings, ...JSON.parse(data) };
+    }
+  } catch (error) {
+    console.error('Error loading settings:', error);
+  }
+  return defaultSettings;
+}
+
+// Carrega as configurações após definir as constantes necessárias
+let currentSettings = loadSettings();
+
+// Save settings
+function saveSettings(settings) {
+  try {
+    fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2), 'utf8');
+  } catch (error) {
+    console.error('Error saving settings:', error);
+  }
+}
+
+// Configurar inicialização automática com o Windows
+function setAutoLaunch(enable) {
+  try {
+    app.setLoginItemSettings({
+      openAtLogin: enable,
+      path: process.execPath
+    });
+    console.log('Auto-start ' + (enable ? 'enabled' : 'disabled'));
+  } catch (error) {
+    console.error('Error setting auto-launch:', error);
+  }
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -16,13 +68,85 @@ function createWindow() {
     frame: true,
   });
 
+  if (currentSettings.startFullscreen) {
+    mainWindow.maximize();
+  }
+
   mainWindow.loadFile('index.html');
   mainWindow.setMenu(null);
   //devtools
   // mainWindow.webContents.openDevTools();
+  
+  // Register a shortcut for toggling fullscreen mode
+  globalShortcut.register('F11', () => {
+    if (mainWindow.isMaximized()) {
+      mainWindow.unmaximize();
+    } else {
+      mainWindow.maximize();
+    }
+  });
 }
 
-app.whenReady().then(createWindow);
+function createSettingsWindow() {
+  // If settings window already exists, focus it
+  if (settingsWindow) {
+    settingsWindow.focus();
+    return;
+  }
+
+  // Get main window size and position
+  const mainWindowBounds = mainWindow.getBounds();
+  const parentWidth = mainWindowBounds.width;
+  const parentHeight = mainWindowBounds.height;
+
+  // Calculate settings window size (slightly smaller than parent)
+  const width = Math.min(800, parentWidth * 0.8);
+  const height = Math.min(800, parentHeight * 0.8);
+
+  // Calculate center position relative to parent
+  const x = Math.round(mainWindowBounds.x + (parentWidth - width) / 2);
+  const y = Math.round(mainWindowBounds.y + (parentHeight - height) / 2);
+
+  settingsWindow = new BrowserWindow({
+    width: width,
+    height: height,
+    x: x,
+    y: y,
+    parent: mainWindow,
+    modal: true, // Make it modal to improve focus
+    resizable: true,
+    minimizable: true,
+    maximizable: false,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    },
+    autoHideMenuBar: true,
+    frame: true,
+    title: 'WindowsX - Settings',
+    show: false, // Don't show until ready
+  });
+
+  settingsWindow.loadFile('settings.html');
+  // settingsWindow.webContents.openDevTools();
+
+  // Show window when ready to avoid flashing
+  settingsWindow.once('ready-to-show', () => {
+    settingsWindow.show();
+  });
+
+  // Handle window close
+  settingsWindow.on('closed', () => {
+    settingsWindow = null;
+  });
+}
+
+app.whenReady().then(() => {
+  // Configura inicialização automática
+  setAutoLaunch(currentSettings.runAtStartup);
+  // Cria a janela principal
+  createWindow();
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -38,7 +162,12 @@ app.on('activate', () => {
 
 // Handle navigation
 ipcMain.on('navigate-to', (event, page) => {
-  mainWindow.loadFile(page);
+  // If the user clicks on settings, open settings window
+  if (page === 'settings.html') {
+    createSettingsWindow();
+  } else {
+    mainWindow.loadFile(page);
+  }
 });
 
 // Handle script execution
@@ -92,4 +221,70 @@ ipcMain.on('run-powershell-script', (event, scriptPath) => {
       mainWindow.webContents.send('script-output', `Script failed with exit code: ${code}`);
     }
   });
+});
+
+// Settings window handlers
+ipcMain.on('open-settings-window', () => {
+  createSettingsWindow();
+});
+
+ipcMain.on('close-settings-window', () => {
+  if (settingsWindow) {
+    settingsWindow.close();
+  }
+});
+
+ipcMain.on('get-settings', (event) => {
+  const settings = loadSettings();
+  event.sender.send('init-settings', settings);
+});
+
+ipcMain.on('save-settings', (event, newSettings) => {
+  // Salva as configurações atualizadas
+  saveSettings(newSettings);
+  
+  // Atualiza a variável de configurações atuais
+  currentSettings = newSettings;
+  
+  // Aplica a configuração de maximizado, se a janela principal existir
+  if (mainWindow) {
+    if (newSettings.startFullscreen) {
+      mainWindow.maximize();
+    } else {
+      mainWindow.unmaximize();
+    }
+  }
+  
+  // Configurar inicialização automática
+  setAutoLaunch(newSettings.runAtStartup);
+});
+
+ipcMain.on('reset-settings', () => {
+  // Reseta para as configurações padrão
+  saveSettings(defaultSettings);
+  
+  // Atualiza a variável de configurações atuais
+  currentSettings = {...defaultSettings};
+  
+  // Aplica a configuração de maximizado, se a janela principal existir
+  if (mainWindow) {
+    if (defaultSettings.startFullscreen) {
+      mainWindow.maximize();
+    } else {
+      mainWindow.unmaximize();
+    }
+  }
+  
+  // Configurar inicialização automática
+  setAutoLaunch(defaultSettings.runAtStartup);
+  
+  // Atualiza a janela de configurações, se estiver aberta
+  if (settingsWindow) {
+    settingsWindow.webContents.send('init-settings', currentSettings);
+  }
+});
+
+// Unregister all shortcuts when app is closing
+app.on('will-quit', () => {
+  globalShortcut.unregisterAll();
 }); 

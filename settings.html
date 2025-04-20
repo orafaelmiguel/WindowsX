@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>WindowsX - Settings</title>
+    <style>
+        :root {
+            --radius: 0.5rem;
+            --background: #ffffff;
+            --foreground: #1a1a1a;
+            --card: #ffffff;
+            --card-foreground: #1a1a1a;
+            --popover: #ffffff;
+            --popover-foreground: #1a1a1a;
+            --primary: #e11d48;
+            --primary-foreground: #ffffff;
+            --secondary: #f3f4f6;
+            --secondary-foreground: #1a1a1a;
+            --muted: #f3f4f6;
+            --muted-foreground: #6b7280;
+            --accent: #f3f4f6;
+            --accent-foreground: #1a1a1a;
+            --destructive: #dc2626;
+            --border: #e5e7eb;
+            --input: #e5e7eb;
+            --ring: #e11d48;
+            --switch-on: #10b981;
+            --switch-off: #9ca3af;
+        }
+
+        .dark {
+            --background: #1a1a1a;
+            --foreground: #ffffff;
+            --card: #262626;
+            --card-foreground: #ffffff;
+            --popover: #262626;
+            --popover-foreground: #ffffff;
+            --primary: #e11d48;
+            --primary-foreground: #ffffff;
+            --secondary: #333333;
+            --secondary-foreground: #ffffff;
+            --muted: #333333;
+            --muted-foreground: #9ca3af;
+            --accent: #333333;
+            --accent-foreground: #ffffff;
+            --destructive: #ef4444;
+            --border: rgba(255, 255, 255, 0.1);
+            --input: rgba(255, 255, 255, 0.15);
+            --ring: #e11d48;
+            --switch-on: #10b981;
+            --switch-off: #4b5563;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--background);
+            color: var(--foreground);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .header {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--foreground);
+        }
+
+        .close-button {
+            background-color: transparent;
+            border: none;
+            color: var(--foreground);
+            font-size: 1.5rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .close-button:hover {
+            opacity: 1;
+        }
+
+        .settings-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--foreground);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            margin-bottom: 1rem;
+        }
+
+        .setting-info {
+            flex: 1;
+        }
+
+        .setting-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .setting-description {
+            font-size: 0.875rem;
+            color: var(--muted-foreground);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--switch-off);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--switch-on);
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px var(--switch-on);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .button {
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            border: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .button-primary {
+            background-color: var(--primary);
+            color: var(--primary-foreground);
+        }
+
+        .button-primary:hover {
+            opacity: 0.9;
+        }
+
+        .button-secondary {
+            background-color: var(--secondary);
+            color: var(--secondary-foreground);
+        }
+
+        .button-secondary:hover {
+            opacity: 0.9;
+        }
+
+        .footer {
+            margin-top: 3rem;
+            padding: 1.5rem 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--muted-foreground);
+            font-size: 0.75rem;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-copyright {
+            margin: 0;
+        }
+
+        .footer-version {
+            margin: 0;
+            opacity: 0.7;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="settings-container">
+        <div class="header">
+            <h1>Settings</h1>
+            <button class="close-button" id="closeButton">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-cog"></i>
+                General
+            </h2>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h3 class="setting-title">Dark Theme</h3>
+                    <p class="setting-description">Switch between light and dark theme</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="themeSwitch">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h3 class="setting-title">Start Maximized</h3>
+                    <p class="setting-description">Launch application in maximized window mode</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="fullscreenSwitch" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h3 class="setting-title">Run at Startup</h3>
+                    <p class="setting-description">Automatically start WindowsX when Windows boots</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="startupSwitch">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="button button-secondary" id="resetButton">Reset to Default</button>
+            <button class="button button-primary" id="saveButton">Save Changes</button>
+        </div>
+
+        <div class="footer">
+            <div class="footer-content">
+                <p class="footer-copyright">© 2025 WindowsX - Made by Ocean :3</p>
+                <p class="footer-version">v1.0.0</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+        
+        // Get DOM elements
+        const closeButton = document.getElementById('closeButton');
+        const themeSwitch = document.getElementById('themeSwitch');
+        const saveButton = document.getElementById('saveButton');
+        const resetButton = document.getElementById('resetButton');
+        
+        // Close window
+        closeButton.addEventListener('click', () => {
+            ipcRenderer.send('close-settings-window');
+        });
+        
+        // Toggle theme
+        themeSwitch.addEventListener('change', () => {
+            if (themeSwitch.checked) {
+                document.body.classList.add('dark');
+            } else {
+                document.body.classList.remove('dark');
+            }
+        });
+        
+        // Save settings
+        saveButton.addEventListener('click', () => {
+            // Get all settings values
+            const settings = {
+                darkTheme: themeSwitch.checked,
+                startFullscreen: document.getElementById('fullscreenSwitch').checked,
+                runAtStartup: document.getElementById('startupSwitch').checked
+            };
+            
+            // Send to main process
+            ipcRenderer.send('save-settings', settings);
+            
+            // Show save confirmation
+            alert('Settings saved successfully!');
+        });
+        
+        // Reset settings
+        resetButton.addEventListener('click', () => {
+            if (confirm('Are you sure you want to reset all settings to default?')) {
+                // Reset UI
+                themeSwitch.checked = false;
+                document.getElementById('fullscreenSwitch').checked = true;
+                document.getElementById('startupSwitch').checked = false;
+                
+                document.body.classList.remove('dark');
+                
+                // Send reset event to main process
+                ipcRenderer.send('reset-settings');
+            }
+        });
+        
+        // Initialize settings from stored values
+        ipcRenderer.on('init-settings', (event, settings) => {
+            if (settings) {
+                themeSwitch.checked = settings.darkTheme || false;
+                document.getElementById('fullscreenSwitch').checked = settings.startFullscreen !== undefined ? settings.startFullscreen : true;
+                document.getElementById('startupSwitch').checked = settings.runAtStartup || false;
+                
+                if (settings.darkTheme) {
+                    document.body.classList.add('dark');
+                }
+            }
+        });
+        
+        // Request current settings on load
+        document.addEventListener('DOMContentLoaded', () => {
+            ipcRenderer.send('get-settings');
+        });
+    </script>
+</body>
+</html> 
