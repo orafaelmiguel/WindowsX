@@ -1,11 +1,11 @@
 {
-  "name": "windowsx",
+  "name": "WindowsX",
   "version": "1.0.0",
   "description": "Aplicativo desktop para otimização do Windows 10",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder --win"
+    "build": "electron-builder --win --publish always"
   },
   "repository": {
     "type": "git",
@@ -23,7 +23,7 @@
     "electron-builder": "^24.9.1"
   },
   "build": {
-    "appId": "com.windowsx.app",
+    "appId": "com.WindowsX.app",
     "win": {
       "target": "nsis",
       "icon": "public/icon.png"
