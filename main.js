@@ -33,6 +33,9 @@ app.on('activate', () => {
   }
 });
 
+ipcMain.on('navigate-to', (event, page) => {
+  mainWindow.loadFile(page);
+});
 
 ipcMain.on('run-powershell-script', (event, scriptPath) => {
   const adminScriptPath = path.join(__dirname, 'run_as_admin.ps1');

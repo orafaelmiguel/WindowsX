@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>WindowsX - Boot Optimization</title>
+    <style>
+        :root {
+            /* Light Theme */
+            --radius: 0.5rem;
+            --background: #ffffff;
+            --foreground: #1a1a1a;
+            --card: #ffffff;
+            --card-foreground: #1a1a1a;
+            --popover: #ffffff;
+            --popover-foreground: #1a1a1a;
+            --primary: #e11d48;
+            --primary-foreground: #ffffff;
+            --secondary: #f3f4f6;
+            --secondary-foreground: #1a1a1a;
+            --muted: #f3f4f6;
+            --muted-foreground: #6b7280;
+            --accent: #f3f4f6;
+            --accent-foreground: #1a1a1a;
+            --destructive: #dc2626;
+            --border: #e5e7eb;
+            --input: #e5e7eb;
+            --ring: #e11d48;
+            --sidebar: #ffffff;
+            --sidebar-foreground: #1a1a1a;
+            --sidebar-primary: #e11d48;
+            --sidebar-primary-foreground: #ffffff;
+            --sidebar-accent: #f3f4f6;
+            --sidebar-accent-foreground: #1a1a1a;
+            --sidebar-border: #e5e7eb;
+            --sidebar-ring: #e11d48;
+        }
+
+        .dark {
+            --background: #1a1a1a;
+            --foreground: #ffffff;
+            --card: #262626;
+            --card-foreground: #ffffff;
+            --popover: #262626;
+            --popover-foreground: #ffffff;
+            --primary: #e11d48;
+            --primary-foreground: #ffffff;
+            --secondary: #333333;
+            --secondary-foreground: #ffffff;
+            --muted: #333333;
+            --muted-foreground: #9ca3af;
+            --accent: #333333;
+            --accent-foreground: #ffffff;
+            --destructive: #ef4444;
+            --border: rgba(255, 255, 255, 0.1);
+            --input: rgba(255, 255, 255, 0.15);
+            --ring: #e11d48;
+            --sidebar: #262626;
+            --sidebar-foreground: #ffffff;
+            --sidebar-primary: #e11d48;
+            --sidebar-primary-foreground: #ffffff;
+            --sidebar-accent: #333333;
+            --sidebar-accent-foreground: #ffffff;
+            --sidebar-border: rgba(255, 255, 255, 0.1);
+            --sidebar-ring: #e11d48;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--background);
+            color: var(--foreground);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background-color: var(--sidebar);
+            color: var(--sidebar-foreground);
+            padding: 2rem;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            border-right: 1px solid var(--sidebar-border);
+        }
+
+        .sidebar-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--sidebar-border);
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--sidebar-foreground);
+        }
+
+        .sidebar-header p {
+            color: var(--muted-foreground);
+            font-size: 0.875rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: var(--radius);
+            color: var(--sidebar-accent-foreground);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover {
+            background-color: var(--sidebar-accent);
+            color: var(--sidebar-foreground);
+        }
+
+        .nav-item.active {
+            background-color: var(--sidebar-primary);
+            color: var(--sidebar-primary-foreground);
+        }
+
+        .nav-item i {
+            margin-right: 1rem;
+            font-size: 1.25rem;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--foreground);
+        }
+
+        .page-header p {
+            color: var(--muted-foreground);
+            font-size: 1rem;
+        }
+
+        .script-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .script-card {
+            background-color: var(--card);
+            color: var(--card-foreground);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            transition: all 0.2s;
+            border: 1px solid var(--border);
+        }
+
+        .script-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-color: var(--ring);
+        }
+
+        .script-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--foreground);
+        }
+
+        .script-card p {
+            color: var(--muted-foreground);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .run-button {
+            background-color: var(--primary);
+            color: var(--primary-foreground);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: background-color 0.2s;
+            width: 100%;
+        }
+
+        .run-button:hover {
+            background-color: var(--destructive);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 1.5rem 0;
+            color: var(--muted-foreground);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--muted);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .success-message {
+            display: none;
+            background-color: var(--chart-2);
+            color: var(--primary-foreground);
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .logs-section {
+            display: none;
+            margin-top: 1.5rem;
+        }
+
+        .logs-section h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--foreground);
+        }
+
+        .output-container {
+            background-color: var(--card);
+            color: var(--card-foreground);
+            border-radius: var(--radius);
+            padding: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Consolas', monospace;
+            border: 1px solid var(--border);
+        }
+
+        .output-line {
+            margin: 0.25rem 0;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius);
+            white-space: pre-wrap;
+        }
+
+        .output-line.error {
+            color: var(--destructive);
+            background-color: rgba(220, 38, 38, 0.1);
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1>WindowsX</h1>
+            <p>Windows 10 Optimization Suite</p>
+        </div>
+        <nav>
+            <a href="#" class="nav-item" onclick="navigateTo('index.html')">
+                <i class="fas fa-home"></i>
+                Home
+            </a>
+            <a href="#" class="nav-item active" onclick="navigateTo('boot.html')">
+                <i class="fas fa-bolt"></i>
+                Boot Optimization
+            </a>
+            <a href="#" class="nav-item" onclick="navigateTo('network.html')">
+                <i class="fas fa-network-wired"></i>
+                Network Optimization
+            </a>
+            <a href="#" class="nav-item" onclick="navigateTo('drivers.html')">
+                <i class="fas fa-microchip"></i>
+                Drivers Optimization
+            </a>
+            <a href="#" class="nav-item" onclick="navigateTo('settings.html')">
+                <i class="fas fa-cog"></i>
+                Settings
+            </a>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1>Boot Optimization</h1>
+            <p>Optimize your Windows startup process for faster boot times and better performance</p>
+        </div>
+
+        <div class="script-list">
+            <div class="script-card">
+                <h3>Basic Boot Optimization</h3>
+                <p>Optimizes basic Windows startup settings for faster boot times</p>
+                <button class="run-button" onclick="runScript('windows/boot/basic_optimize.ps1')">Run Optimization</button>
+            </div>
+            
+            <div class="script-card">
+                <h3>Advanced Boot Optimization</h3>
+                <p>Complete optimization with advanced startup adjustments</p>
+                <button class="run-button" onclick="runScript('windows/boot/advanced_optimize.ps1')">Run Optimization</button>
+            </div>
+            
+            <div class="script-card">
+                <h3>Boot Services Optimization</h3>
+                <p>Optimizes services that start with Windows for better performance</p>
+                <button class="run-button" onclick="runScript('windows/boot/services_optimize.ps1')">Run Optimization</button>
+            </div>
+            
+            <div class="script-card">
+                <h3>Boot Drivers Optimization</h3>
+                <p>Optimizes drivers that load during startup</p>
+                <button class="run-button" onclick="runScript('windows/boot/drivers_optimize.ps1')">Run Optimization</button>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            Running optimization script...
+        </div>
+
+        <div class="success-message" id="success-message">
+            <i class="fas fa-check-circle"></i>
+            Optimization completed successfully!
+        </div>
+
+        <div class="logs-section" id="logs-section">
+            <h3>Optimization Logs</h3>
+            <div class="output-container" id="output">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+        
+        function navigateTo(page) {
+            ipcRenderer.send('navigate-to', page);
+        }
+        
+        function runScript(scriptPath) {
+            const output = document.getElementById('output');
+            const loading = document.getElementById('loading');
+            const successMessage = document.getElementById('success-message');
+            const logsSection = document.getElementById('logs-section');
+            
+            output.innerHTML = '';
+            loading.style.display = 'block';
+            successMessage.style.display = 'none';
+            logsSection.style.display = 'none';
+            
+            ipcRenderer.send('run-powershell-script', scriptPath);
+        }
+
+        function addOutputLine(text, type = 'info') {
+            const output = document.getElementById('output');
+            const line = document.createElement('div');
+            line.className = `output-line ${type}`;
+            line.textContent = text;
+            output.appendChild(line);
+            output.scrollTop = output.scrollHeight;
+        }
+
+        ipcRenderer.on('script-output', (event, data) => {
+            const loading = document.getElementById('loading');
+            const successMessage = document.getElementById('success-message');
+            const logsSection = document.getElementById('logs-section');
+            
+            loading.style.display = 'none';
+            logsSection.style.display = 'block';
+            successMessage.style.display = 'block';
+            
+            addOutputLine(data);
+        });
+
+        ipcRenderer.on('script-error', (event, data) => {
+            const loading = document.getElementById('loading');
+            const logsSection = document.getElementById('logs-section');
+            
+            loading.style.display = 'none';
+            logsSection.style.display = 'block';
+            
+            addOutputLine(data, 'error');
+        });
+
+        ipcRenderer.on('script-complete', (event, code) => {
+            const loading = document.getElementById('loading');
+            const successMessage = document.getElementById('success-message');
+            const logsSection = document.getElementById('logs-section');
+            
+            loading.style.display = 'none';
+            logsSection.style.display = 'block';
+            
+            if (code === 0) {
+                successMessage.style.display = 'block';
+            }
+            
+            addOutputLine(`Script completed with exit code: ${code}`);
+        });
+    </script>
+</body>
+</html> 
