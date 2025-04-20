@@ -327,11 +327,17 @@
         
         // Toggle theme
         themeSwitch.addEventListener('change', () => {
-            if (themeSwitch.checked) {
+            const isDark = themeSwitch.checked;
+            
+            // Atualiza a aparência da janela de configurações
+            if (isDark) {
                 document.body.classList.add('dark');
             } else {
                 document.body.classList.remove('dark');
             }
+            
+            // Envia evento para o processo principal para atualizar todas as janelas
+            ipcRenderer.send('toggle-theme', isDark);
         });
         
         // Save settings

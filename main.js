@@ -56,6 +56,11 @@ function setAutoLaunch(enable) {
   }
 }
 
+// Definir ícone do aplicativo baseado na plataforma
+if (process.platform === 'win32') {
+  app.setAppUserModelId(process.execPath);
+}
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
@@ -66,6 +71,7 @@ function createWindow() {
     },
     autoHideMenuBar: true,
     frame: true,
+    icon: path.join(__dirname, 'public', 'icon.png')
   });
 
   if (currentSettings.startFullscreen) {
@@ -125,6 +131,7 @@ function createSettingsWindow() {
     frame: true,
     title: 'WindowsX - Settings',
     show: false, // Don't show until ready
+    icon: path.join(__dirname, 'public', 'icon.png')
   });
 
   settingsWindow.loadFile('settings.html');
@@ -141,11 +148,38 @@ function createSettingsWindow() {
   });
 }
 
+// Aplicar tema a uma janela
+function applyTheme(window, isDark) {
+  if (window && !window.isDestroyed()) {
+    window.webContents.executeJavaScript(`
+      document.body.classList.${isDark ? 'add' : 'remove'}('dark');
+      localStorage.setItem('darkTheme', ${isDark});
+    `).catch(err => console.error('Error applying theme:', err));
+  }
+}
+
+// Aplicar tema a todas as janelas
+function applyThemeToAllWindows(isDark) {
+  // Aplicar à janela principal
+  applyTheme(mainWindow, isDark);
+  
+  // Aplicar à janela de configurações, se estiver aberta
+  if (settingsWindow) {
+    applyTheme(settingsWindow, isDark);
+  }
+}
+
 app.whenReady().then(() => {
   // Configura inicialização automática
   setAutoLaunch(currentSettings.runAtStartup);
+  
   // Cria a janela principal
   createWindow();
+  
+  // Aplica o tema inicial
+  setTimeout(() => {
+    applyThemeToAllWindows(currentSettings.darkTheme);
+  }, 500); // pequeno atraso para garantir que a janela está pronta
 });
 
 app.on('window-all-closed', () => {
@@ -239,9 +273,21 @@ ipcMain.on('get-settings', (event) => {
   event.sender.send('init-settings', settings);
 });
 
+ipcMain.on('toggle-theme', (event, isDark) => {
+  // Atualizar configurações
+  currentSettings.darkTheme = isDark;
+  saveSettings(currentSettings);
+  
+  // Aplicar tema a todas as janelas
+  applyThemeToAllWindows(isDark);
+});
+
 ipcMain.on('save-settings', (event, newSettings) => {
   // Salva as configurações atualizadas
   saveSettings(newSettings);
+  
+  // Verifica se o tema mudou
+  const themeChanged = currentSettings.darkTheme !== newSettings.darkTheme;
   
   // Atualiza a variável de configurações atuais
   currentSettings = newSettings;
@@ -253,6 +299,11 @@ ipcMain.on('save-settings', (event, newSettings) => {
     } else {
       mainWindow.unmaximize();
     }
+  }
+  
+  // Aplicar o novo tema, se mudou
+  if (themeChanged) {
+    applyThemeToAllWindows(newSettings.darkTheme);
   }
   
   // Configurar inicialização automática

@@ -455,6 +455,15 @@
     <script>
         const { ipcRenderer } = require('electron');
         
+        // Verificar e aplicar o tema ao carregar a página
+        document.addEventListener('DOMContentLoaded', () => {
+            // Verificar o tema salvo no localStorage
+            const darkTheme = localStorage.getItem('darkTheme') === 'true';
+            if (darkTheme) {
+                document.body.classList.add('dark');
+            }
+        });
+        
         // Initialize sidebar state
         document.addEventListener('DOMContentLoaded', () => {
             // Check if sidebar state is stored in localStorage
