@@ -212,6 +212,32 @@
             font-weight: bold;
             margin-top: 10px;
         }
+
+        /* Add footer styles */
+        .footer {
+            margin-top: 3rem;
+            padding: 1.5rem 0;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.75rem;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-copyright {
+            margin: 0;
+        }
+
+        .footer-version {
+            margin: 0;
+            opacity: 0.7;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -256,6 +282,13 @@
 
             <div class="logs" id="logs"></div>
             <p class="success-message" id="successMessage" style="display: none;">Script completed successfully!</p>
+        </div>
+
+        <div class="footer">
+            <div class="footer-content">
+                <p class="footer-copyright">© 2025 WindowsX - Made by Ocean :3</p
+                <p class="footer-version">v1.0.0</p>
+            </div>
         </div>
     </div>
 

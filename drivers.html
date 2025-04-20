@@ -347,6 +347,31 @@
             color: var(--destructive);
             background-color: rgba(220, 38, 38, 0.1);
         }
+
+        /* Add footer styles */
+        .footer {
+            margin-top: 3rem;
+            padding: 1.5rem 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--muted-foreground);
+            font-size: 0.75rem;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-copyright {
+            margin: 0;
+        }
+
+        .footer-version {
+            margin: 0;
+            opacity: 0.7;
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -395,6 +420,29 @@
                 <h3>Update System Drivers</h3>
                 <p>Check and update all system drivers to their latest versions.</p>
                 <button class="run-button" onclick="runScript('windows/drivers/update_drivers.ps1', 'Update System Drivers', 'Checking and updating system drivers...')">Run Script</button>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            Running optimization script...
+        </div>
+
+        <div class="success-message" id="success-message">
+            <i class="fas fa-check-circle"></i>
+            Optimization completed successfully!
+        </div>
+
+        <div class="logs-section" id="logs-section">
+            <h3>Optimization Logs</h3>
+            <div class="output-container" id="output">
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="footer-content">
+                <p class="footer-copyright">© 2025 WindowsX - Made by Ocean :3</p>
+                <p class="footer-version">v1.0.0</p>
             </div>
         </div>
     </div>
