@@ -1,5 +1,9 @@
 # ⚡WindowsX
 
+![image](https://github.com/user-attachments/assets/39d9f136-7269-4076-bdfe-bb17f3ed13de) ![image](https://github.com/user-attachments/assets/83859bb4-1f14-49e5-ba82-69d9ceda5df3)
+
+
+
 > ⚠ **Warning:**   
 > These scripts modify system services, power settings, and hardware configurations.  
 > **If you are a beginner, do not run these scripts unless you fully understand the changes being made.**  
