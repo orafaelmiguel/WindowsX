@@ -12,6 +12,11 @@
             --border-color: #e0e0e0;
             --success-color: #4caf50;
             --error-color: #f44336;
+            --sidebar-width: 240px;
+            --sidebar-collapsed-width: 60px;
+            --sidebar-bg: #f5f5f5;
+            --sidebar-text: #333333;
+            --sidebar-border: #e0e0e0;
         }
 
         [data-theme="dark"] {
@@ -22,6 +27,9 @@
             --border-color: #404040;
             --success-color: #4caf50;
             --error-color: #f44336;
+            --sidebar-bg: #2d2d2d;
+            --sidebar-text: #ffffff;
+            --sidebar-border: #404040;
         }
 
         body {
@@ -30,12 +38,91 @@
             padding: 0;
             background-color: var(--background-color);
             color: var(--text-color);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: var(--sidebar-collapsed-width);
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--sidebar-border);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            transition: width 0.3s ease;
+            overflow: hidden;
+        }
+
+        .sidebar.expanded {
+            width: var(--sidebar-width);
+        }
+
+        .sidebar-toggle {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 18px;
+        }
+
+        .sidebar-content {
+            padding-top: 20px;
+            white-space: nowrap;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .nav-item:hover {
+            opacity: 1;
+        }
+
+        .nav-item.active {
+            opacity: 1;
+            border-left: 3px solid var(--primary-color);
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-item i {
+            margin-right: 15px;
+            font-size: 18px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .nav-item span {
+            display: none;
+        }
+
+        .sidebar.expanded .nav-item span {
+            display: inline;
         }
 
         .container {
-            max-width: 800px;
-            margin: 0 auto;
+            margin-left: var(--sidebar-collapsed-width);
+            flex: 1;
             padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .container.sidebar-expanded {
+            margin-left: var(--sidebar-width);
         }
 
         .header {
@@ -126,8 +213,33 @@
             margin-top: 10px;
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <div class="sidebar">
+        <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="sidebar-content">
+            <a href="#" class="nav-item" onclick="navigateTo('index.html')">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="#" class="nav-item" onclick="navigateTo('boot.html')">
+                <i class="fas fa-bolt"></i>
+                <span>Boot</span>
+            </a>
+            <a href="#" class="nav-item" onclick="navigateTo('network.html')">
+                <i class="fas fa-network-wired"></i>
+                <span>Network</span>
+            </a>
+            <a href="#" class="nav-item" onclick="navigateTo('drivers.html')">
+                <i class="fas fa-microchip"></i>
+                <span>Drivers</span>
+            </a>
+        </div>
+    </div>
+
     <div class="container">
         <div class="header">
             <button class="back-button" id="backButton">Back</button>
@@ -166,6 +278,19 @@
             const previousPage = urlParams.get('previousPage') || 'index.html';
             ipcRenderer.send('navigate-to', previousPage);
         });
+
+        // Toggle sidebar
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            const sidebar = document.querySelector('.sidebar');
+            const container = document.querySelector('.container');
+            sidebar.classList.toggle('expanded');
+            container.classList.toggle('sidebar-expanded');
+        });
+
+        // Navigation function
+        function navigateTo(page) {
+            ipcRenderer.send('navigate-to', page);
+        }
 
         // Handle script output
         ipcRenderer.on('script-output', (event, data) => {

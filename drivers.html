@@ -25,6 +25,11 @@
             --border: #e5e7eb;
             --input: #e5e7eb;
             --ring: #e11d48;
+            --chart-1: #f59e0b;
+            --chart-2: #10b981;
+            --chart-3: #3b82f6;
+            --chart-4: #8b5cf6;
+            --chart-5: #ec4899;
             --sidebar: #ffffff;
             --sidebar-foreground: #1a1a1a;
             --sidebar-primary: #e11d48;
@@ -33,6 +38,8 @@
             --sidebar-accent-foreground: #1a1a1a;
             --sidebar-border: #e5e7eb;
             --sidebar-ring: #e11d48;
+            --sidebar-width: 240px;
+            --sidebar-collapsed-width: 60px;
         }
 
         .dark {
@@ -54,6 +61,11 @@
             --border: rgba(255, 255, 255, 0.1);
             --input: rgba(255, 255, 255, 0.15);
             --ring: #e11d48;
+            --chart-1: #6366f1;
+            --chart-2: #10b981;
+            --chart-3: #f59e0b;
+            --chart-4: #ec4899;
+            --chart-5: #e11d48;
             --sidebar: #262626;
             --sidebar-foreground: #ffffff;
             --sidebar-primary: #e11d48;
@@ -79,39 +91,84 @@
         }
 
         .sidebar {
-            width: 280px;
+            width: var(--sidebar-collapsed-width);
             background-color: var(--sidebar);
             color: var(--sidebar-foreground);
-            padding: 2rem;
-            position: fixed;
             height: 100vh;
+            position: fixed;
             overflow-y: auto;
             border-right: 1px solid var(--sidebar-border);
+            transition: width 0.3s ease;
+            overflow-x: hidden;
+            z-index: 100;
+        }
+
+        .sidebar.expanded {
+            width: var(--sidebar-width);
+        }
+
+        .sidebar-toggle {
+            background-color: var(--sidebar-primary);
+            color: var(--sidebar-primary-foreground);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin: 10px auto;
+            font-size: 1rem;
         }
 
         .sidebar-header {
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
+            padding: 1rem 0.75rem;
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             border-bottom: 1px solid var(--sidebar-border);
+            text-align: center;
         }
 
         .sidebar-header h1 {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 600;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
             color: var(--sidebar-foreground);
+            white-space: nowrap;
+            overflow: hidden;
+            opacity: 0;
+            max-height: 0;
+            transition: opacity 0.3s, max-height 0.3s;
+        }
+
+        .sidebar.expanded .sidebar-header h1 {
+            opacity: 1;
+            max-height: 50px;
         }
 
         .sidebar-header p {
             color: var(--muted-foreground);
-            font-size: 0.875rem;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            overflow: hidden;
+            opacity: 0;
+            max-height: 0;
+            transition: opacity 0.3s, max-height 0.3s;
+        }
+
+        .sidebar.expanded .sidebar-header p {
+            opacity: 1;
+            max-height: 50px;
         }
 
         .nav-item {
             display: flex;
             align-items: center;
-            padding: 0.75rem 1rem;
-            margin-bottom: 0.5rem;
+            padding: 0.6rem 0.75rem;
+            margin: 0.25rem 0.5rem;
             border-radius: var(--radius);
             color: var(--sidebar-accent-foreground);
             text-decoration: none;
@@ -130,13 +187,32 @@
 
         .nav-item i {
             margin-right: 1rem;
-            font-size: 1.25rem;
+            font-size: 1rem;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .nav-item span {
+            opacity: 0;
+            display: none;
+            white-space: nowrap;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar.expanded .nav-item span {
+            opacity: 1;
+            display: inline;
         }
 
         .main-content {
             flex: 1;
-            margin-left: 280px;
+            margin-left: var(--sidebar-collapsed-width);
             padding: 2rem;
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-content.sidebar-expanded {
+            margin-left: var(--sidebar-width);
         }
 
         .page-header {
@@ -277,30 +353,33 @@
 </head>
 <body>
     <div class="sidebar">
+        <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
         <div class="sidebar-header">
             <h1>WindowsX</h1>
-            <p>Windows 10 Optimization Suite</p>
+            <p>Optimization Suite</p>
         </div>
         <nav>
             <a href="#" class="nav-item" onclick="navigateTo('index.html')">
                 <i class="fas fa-home"></i>
-                Home
-            </a>
-            <a href="#" class="nav-item" onclick="navigateTo('boot.html')">
-                <i class="fas fa-bolt"></i>
-                Boot Optimization
+                <span>Home</span>
             </a>
             <a href="#" class="nav-item" onclick="navigateTo('network.html')">
                 <i class="fas fa-network-wired"></i>
-                Network Optimization
+                <span>Network</span>
+            </a>
+            <a href="#" class="nav-item" onclick="navigateTo('boot.html')">
+                <i class="fas fa-bolt"></i>
+                <span>Boot</span>
             </a>
             <a href="#" class="nav-item active" onclick="navigateTo('drivers.html')">
                 <i class="fas fa-microchip"></i>
-                Drivers Optimization
+                <span>Drivers</span>
             </a>
             <a href="#" class="nav-item" onclick="navigateTo('settings.html')">
                 <i class="fas fa-cog"></i>
-                Settings
+                <span>Settings</span>
             </a>
         </nav>
     </div>
@@ -322,6 +401,30 @@
 
     <script>
         const { ipcRenderer } = require('electron');
+        
+        // Initialize sidebar state
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if sidebar state is stored in localStorage
+            const sidebarExpanded = localStorage.getItem('sidebarExpanded') === 'true';
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            
+            if (sidebarExpanded) {
+                sidebar.classList.add('expanded');
+                mainContent.classList.add('sidebar-expanded');
+            }
+        });
+        
+        // Toggle sidebar
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            sidebar.classList.toggle('expanded');
+            mainContent.classList.toggle('sidebar-expanded');
+            
+            // Store sidebar state in localStorage
+            localStorage.setItem('sidebarExpanded', sidebar.classList.contains('expanded'));
+        });
         
         function navigateTo(page) {
             ipcRenderer.send('navigate-to', page);
