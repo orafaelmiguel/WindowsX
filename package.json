@@ -36,6 +36,11 @@
     },
     "files": [
       "**/*",
+      "*.ps1",
+      "windows/**/*.ps1",
+      "windows/boot/*.ps1",
+      "windows/drivers/*.ps1",
+      "windows/network/*.ps1",
       "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
       "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
       "!**/node_modules/*.d.ts",
@@ -46,6 +51,17 @@
       "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}",
       "!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}"
     ],
-    "asar": true
+    "extraResources": [
+      {
+        "from": "./",
+        "filter": ["*.ps1"]
+      },
+      {
+        "from": "windows",
+        "to": "windows",
+        "filter": ["**/*.ps1"]
+      }
+    ],
+    "asar": false
   }
 }
