@@ -63,17 +63,58 @@
         .output-container {
             margin-top: 20px;
             padding: 15px;
-            background-color: #f8f9fa;
+            background-color: #1e1e1e;
             border-radius: 4px;
             max-height: 300px;
             overflow-y: auto;
+            font-family: 'Consolas', monospace;
+            color: #d4d4d4;
         }
         .output-line {
             margin: 5px 0;
-            font-family: monospace;
+            padding: 2px 5px;
+            border-radius: 2px;
+            white-space: pre-wrap;
         }
-        .error {
-            color: #dc3545;
+        .output-line.error {
+            color: #f14c4c;
+            background-color: rgba(241, 76, 76, 0.1);
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+            color: #666;
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: #4CAF50;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .success-message {
+            display: none;
+            background-color: #dff0d8;
+            color: #3c763d;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .logs-section {
+            display: none;
+            margin-top: 20px;
+        }
+        .logs-section h3 {
+            color: #333;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -101,8 +142,19 @@
             </div>
         </div>
 
-        <div class="output-container" id="output">
-            <!-- A saída dos scripts será exibida aqui -->
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            Executando script...
+        </div>
+
+        <div class="success-message" id="success-message">
+            Script executado com sucesso!
+        </div>
+
+        <div class="logs-section" id="logs-section">
+            <h3>Logs:</h3>
+            <div class="output-container" id="output">
+            </div>
         </div>
     </div>
 
@@ -111,36 +163,62 @@
         
         function runScript(scriptPath) {
             const output = document.getElementById('output');
-            output.innerHTML = ''; // Limpa a saída anterior
+            const loading = document.getElementById('loading');
+            const successMessage = document.getElementById('success-message');
+            const logsSection = document.getElementById('logs-section');
+            
+            output.innerHTML = '';
+            loading.style.display = 'block';
+            successMessage.style.display = 'none';
+            logsSection.style.display = 'none';
             
             ipcRenderer.send('run-powershell-script', scriptPath);
         }
 
-        ipcRenderer.on('script-output', (event, data) => {
+        function addOutputLine(text, type = 'info') {
             const output = document.getElementById('output');
             const line = document.createElement('div');
-            line.className = 'output-line';
-            line.textContent = data;
+            line.className = `output-line ${type}`;
+            line.textContent = text;
             output.appendChild(line);
             output.scrollTop = output.scrollHeight;
+        }
+
+        ipcRenderer.on('script-output', (event, data) => {
+            const loading = document.getElementById('loading');
+            const successMessage = document.getElementById('success-message');
+            const logsSection = document.getElementById('logs-section');
+            
+            loading.style.display = 'none';
+            logsSection.style.display = 'block';
+            successMessage.style.display = 'block';
+            
+            addOutputLine(data);
         });
 
         ipcRenderer.on('script-error', (event, data) => {
-            const output = document.getElementById('output');
-            const line = document.createElement('div');
-            line.className = 'output-line error';
-            line.textContent = data;
-            output.appendChild(line);
-            output.scrollTop = output.scrollHeight;
+            const loading = document.getElementById('loading');
+            const logsSection = document.getElementById('logs-section');
+            
+            loading.style.display = 'none';
+            logsSection.style.display = 'block';
+            
+            addOutputLine(data, 'error');
         });
 
         ipcRenderer.on('script-complete', (event, code) => {
-            const output = document.getElementById('output');
-            const line = document.createElement('div');
-            line.className = 'output-line';
-            line.textContent = `Script concluído com código de saída: ${code}`;
-            output.appendChild(line);
-            output.scrollTop = output.scrollHeight;
+            const loading = document.getElementById('loading');
+            const successMessage = document.getElementById('success-message');
+            const logsSection = document.getElementById('logs-section');
+            
+            loading.style.display = 'none';
+            logsSection.style.display = 'block';
+            
+            if (code === 0) {
+                successMessage.style.display = 'block';
+            }
+            
+            addOutputLine(`Script concluído com código de saída: ${code}`);
         });
     </script>
 </body>

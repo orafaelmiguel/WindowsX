@@ -37,6 +37,7 @@ app.on('activate', () => {
 ipcMain.on('run-powershell-script', (event, scriptPath) => {
   const adminScriptPath = path.join(__dirname, 'run_as_admin.ps1');
   const absoluteScriptPath = path.resolve(scriptPath);
+  
   const powershell = spawn('powershell.exe', [
     '-ExecutionPolicy', 'Bypass',
     '-File', adminScriptPath,
