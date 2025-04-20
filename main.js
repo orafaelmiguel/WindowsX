@@ -15,8 +15,7 @@ function createWindow() {
   });
 
   mainWindow.loadFile('index.html');
-  
-  // Descomente a linha abaixo para abrir o DevTools
+  //devtools
   // mainWindow.webContents.openDevTools();
 }
 
@@ -34,12 +33,25 @@ app.on('activate', () => {
   }
 });
 
-// Manipulador para executar scripts PowerShell
+
 ipcMain.on('run-powershell-script', (event, scriptPath) => {
-  const powershell = spawn('powershell.exe', ['-ExecutionPolicy', 'Bypass', '-File', scriptPath]);
+  const adminScriptPath = path.join(__dirname, 'run_as_admin.ps1');
+  const absoluteScriptPath = path.resolve(scriptPath);
+  const powershell = spawn('powershell.exe', [
+    '-ExecutionPolicy', 'Bypass',
+    '-File', adminScriptPath,
+    '-ScriptPath', absoluteScriptPath
+  ]);
   
   powershell.stdout.on('data', (data) => {
-    mainWindow.webContents.send('script-output', data.toString());
+    const output = data.toString();
+    if (output.includes('SCRIPT_COMPLETED')) {
+      mainWindow.webContents.send('script-complete', 0);
+    } else if (output.includes('SCRIPT_FAILED')) {
+      mainWindow.webContents.send('script-error', 'O script falhou ao executar');
+    } else {
+      mainWindow.webContents.send('script-output', output);
+    }
   });
 
   powershell.stderr.on('data', (data) => {
@@ -47,6 +59,8 @@ ipcMain.on('run-powershell-script', (event, scriptPath) => {
   });
 
   powershell.on('close', (code) => {
-    mainWindow.webContents.send('script-complete', code);
+    if (code !== 0) {
+      mainWindow.webContents.send('script-error', `Processo encerrado com código ${code}`);
+    }
   });
 }); 
