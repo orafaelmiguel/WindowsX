@@ -3,7 +3,6 @@
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)  [![GitHub stars](https://img.shields.io/github/stars/orafaelmiguel/WindowsX?style=social)](https://github.com/orafaelmiguel/WindowsXstargazers)  [![GitHub issues](https://img.shields.io/github/issues/orafaelmiguel/WindowsX)](https://github.com/orafaelmiguel/WindowsX/issues)
 
 <p float="left">
-  <img src="https://github.com/user-attachments/assets/39d9f136-7269-4076-bdfe-bb17f3ed13de" width="500" alt="Imagem 1" />
   <img src="https://github.com/user-attachments/assets/62f77983-53b3-421b-863b-ae74d8af979e"         width="500" alt="Imagem 2" />
 </p>
 
