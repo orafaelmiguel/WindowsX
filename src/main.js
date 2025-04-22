@@ -277,6 +277,13 @@ ipcMain.on('run-powershell-script', (event, scriptPath) => {
     return;
   }
   
+  console.log('Executing PowerShell script...');
+  
+  // Se estamos rodando o script de análise de armazenamento real, vamos exibir uma mensagem de carregamento
+  if (scriptPath.includes('real_storage_scan.ps1')) {
+    mainWindow.webContents.send('script-output', 'Scanning storage, this may take a few minutes...');
+  }
+  
   const powershell = spawn('powershell.exe', [
     '-NoProfile',
     '-ExecutionPolicy', 'Bypass',
@@ -287,18 +294,29 @@ ipcMain.on('run-powershell-script', (event, scriptPath) => {
   powershell.stdout.on('data', (data) => {
     const output = data.toString().trim();
     if (output) {
-      mainWindow.webContents.send('script-output', output);
+      console.log('Script output:', output);
+      
+      // Split output by lines and send each line separately
+      const lines = output.split('\n');
+      lines.forEach(line => {
+        const trimmedLine = line.trim();
+        if (trimmedLine) {
+          mainWindow.webContents.send('script-output', trimmedLine);
+        }
+      });
     }
   });
 
   powershell.stderr.on('data', (data) => {
     const error = data.toString().trim();
     if (error) {
-      mainWindow.webContents.send('script-output', error);
+      console.error('Script error:', error);
+      mainWindow.webContents.send('script-error', error);
     }
   });
 
   powershell.on('close', (code) => {
+    console.log(`PowerShell script exited with code ${code}`);
     if (code === 0) {
       mainWindow.webContents.send('script-completed');
     } else {

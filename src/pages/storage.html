@@ -217,6 +217,10 @@
 
         .page-header {
             margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
         }
 
         .page-header h1 {
@@ -224,10 +228,37 @@
             font-weight: 600;
             margin-bottom: 0.5rem;
             color: var(--foreground);
+            flex-basis: 100%;
         }
 
         .page-header p {
             color: var(--muted-foreground);
+            font-size: 1rem;
+            margin-top: 0;
+            flex-basis: 70%;
+        }
+
+        .refresh-button {
+            background-color: var(--primary);
+            color: var(--primary-foreground);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .refresh-button:hover {
+            background-color: var(--destructive);
+            transform: translateY(-2px);
+        }
+
+        .refresh-button i {
             font-size: 1rem;
         }
 
@@ -515,6 +546,9 @@
         <div class="page-header">
             <h1>Storage Management</h1>
             <p>Optimize your storage and manage disk space effectively</p>
+            <button id="refreshButton" class="refresh-button" title="Refresh Storage Data">
+                <i class="fas fa-sync-alt"></i> Refresh Data
+            </button>
         </div>
 
         <div class="dashboard-grid">
@@ -525,36 +559,36 @@
                     <div class="storage-chart-fill" id="system-drive-usage" style="width: 0%;"></div>
                 </div>
                 <div class="storage-info">
-                    <span id="system-drive-used">Calculating...</span>
-                    <span id="system-drive-total">Calculating...</span>
+                    <span id="system-drive-used">Scanning...</span>
+                    <span id="system-drive-total">Please wait</span>
                 </div>
                 <div class="storage-detail">
                     <div class="storage-type">
                         <i class="fas fa-file-alt"></i>
                         <span>System Files</span>
                     </div>
-                    <div class="storage-value" id="system-files-size">Calculating...</div>
+                    <div class="storage-value" id="system-files-size">Scanning...</div>
                 </div>
                 <div class="storage-detail">
                     <div class="storage-type">
                         <i class="fas fa-file-download"></i>
                         <span>Downloads</span>
                     </div>
-                    <div class="storage-value" id="downloads-size">Calculating...</div>
+                    <div class="storage-value" id="downloads-size">Scanning...</div>
                 </div>
                 <div class="storage-detail">
                     <div class="storage-type">
                         <i class="fas fa-trash"></i>
                         <span>Recycle Bin</span>
                     </div>
-                    <div class="storage-value" id="recyclebin-size">Calculating...</div>
+                    <div class="storage-value" id="recyclebin-size">Scanning...</div>
                 </div>
                 <div class="storage-detail">
                     <div class="storage-type">
                         <i class="fas fa-broom"></i>
                         <span>Temporary Files</span>
                     </div>
-                    <div class="storage-value" id="temp-files-size">Calculating...</div>
+                    <div class="storage-value" id="temp-files-size">Scanning...</div>
                 </div>
             </div>
 
@@ -666,7 +700,16 @@
             
             // Iniciar as análises de armazenamento
             getDriveInfo();
-            getStorageBreakdown();
+            
+            // Adicionar evento de clique ao botão de atualização
+            document.getElementById('refreshButton').addEventListener('click', () => {
+                // Resetar displays
+                document.getElementById('success-message').style.display = 'none';
+                document.getElementById('logs-section').style.display = 'none';
+                
+                // Iniciar nova análise
+                getDriveInfo();
+            });
         });
         
         // Initialize sidebar state
@@ -722,33 +765,44 @@
         }
         
         function getDriveInfo() {
-            // Simulando dados para demonstração - em uma implementação real, isso seria obtido via PowerShell
+            // Redefinir status de exibição
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('loading-text').textContent = 'Scanning storage, please wait...';
+            document.getElementById('success-message').style.display = 'none';
+            document.getElementById('logs-section').style.display = 'none';
+            
+            // Executar script PowerShell para obter informações reais de armazenamento
+            ipcRenderer.send('run-powershell-script', 'windows/storage/real_storage_scan.ps1');
+            
+            // As informações serão processadas pelo handler de eventos abaixo
+            document.getElementById('system-drive-usage').style.width = '0%';
+            document.getElementById('system-drive-used').textContent = 'Scanning...';
+            document.getElementById('system-drive-total').textContent = 'Please wait';
+            
+            document.getElementById('system-files-size').textContent = 'Scanning...';
+            document.getElementById('downloads-size').textContent = 'Scanning...';
+            document.getElementById('recyclebin-size').textContent = 'Scanning...';
+            document.getElementById('temp-files-size').textContent = 'Scanning...';
+            
+            document.getElementById('images-size').textContent = 'Scanning...';
+            document.getElementById('videos-size').textContent = 'Scanning...';
+            document.getElementById('audio-size').textContent = 'Scanning...';
+            document.getElementById('documents-size').textContent = 'Scanning...';
+            document.getElementById('apps-size').textContent = 'Scanning...';
+            
+            // Definir um timeout para atualizar a interface se o script demorar muito
             setTimeout(() => {
-                const totalSpace = 500 * 1024 * 1024 * 1024; // 500 GB em bytes
-                const usedSpace = 320 * 1024 * 1024 * 1024;  // 320 GB em bytes
-                const usedPercentage = (usedSpace / totalSpace) * 100;
-                
-                document.getElementById('system-drive-usage').style.width = `${usedPercentage}%`;
-                document.getElementById('system-drive-used').textContent = `Used: ${formatBytes(usedSpace)}`;
-                document.getElementById('system-drive-total').textContent = `Total: ${formatBytes(totalSpace)}`;
-                
-                // Detalhes do espaço utilizado
-                document.getElementById('system-files-size').textContent = formatBytes(120 * 1024 * 1024 * 1024); // 120 GB
-                document.getElementById('downloads-size').textContent = formatBytes(45 * 1024 * 1024 * 1024);     // 45 GB
-                document.getElementById('recyclebin-size').textContent = formatBytes(2 * 1024 * 1024 * 1024);     // 2 GB
-                document.getElementById('temp-files-size').textContent = formatBytes(8 * 1024 * 1024 * 1024);     // 8 GB
-            }, 1000);
+                const loading = document.getElementById('loading');
+                if (loading.style.display !== 'none') {
+                    // Verificar se ainda estamos carregando após 60 segundos
+                    document.getElementById('loading-text').textContent = 'Taking longer than expected, please be patient...';
+                }
+            }, 60000);
         }
         
         function getStorageBreakdown() {
-            // Simulando dados para demonstração - em uma implementação real, isso seria obtido via PowerShell
-            setTimeout(() => {
-                document.getElementById('images-size').textContent = formatBytes(35 * 1024 * 1024 * 1024);   // 35 GB
-                document.getElementById('videos-size').textContent = formatBytes(120 * 1024 * 1024 * 1024);  // 120 GB
-                document.getElementById('audio-size').textContent = formatBytes(18 * 1024 * 1024 * 1024);    // 18 GB
-                document.getElementById('documents-size').textContent = formatBytes(7 * 1024 * 1024 * 1024); // 7 GB
-                document.getElementById('apps-size').textContent = formatBytes(85 * 1024 * 1024 * 1024);     // 85 GB
-            }, 1500);
+            // Esta função não é mais necessária, pois os dados são processados pelo evento script-output
+            // Mantida apenas por compatibilidade
         }
 
         function addOutputLine(text, type = 'info') {
@@ -765,10 +819,96 @@
             const successMessage = document.getElementById('success-message');
             const logsSection = document.getElementById('logs-section');
             
-            loading.style.display = 'none';
-            logsSection.style.display = 'block';
+            console.log("Received script output:", data);
             
-            addOutputLine(data);
+            // Processa os dados do script real_storage_scan.ps1
+            if (data.includes('|')) {
+                const parts = data.split('|');
+                const dataType = parts[0];
+                
+                console.log("Processing data type:", dataType);
+                
+                switch (dataType) {
+                    case 'DRIVE_INFO':
+                        if (parts[1] === 'C:') {  // Sistema operacional
+                            const totalSpace = parseInt(parts[2]) || 0;
+                            const freeSpace = parseInt(parts[3]) || 0;
+                            const usedSpace = parseInt(parts[4]) || 0;
+                            const usedPercentage = parseFloat(parts[5]) || 0;
+                            
+                            console.log("Drive info:", totalSpace, freeSpace, usedSpace, usedPercentage);
+                            
+                            document.getElementById('system-drive-usage').style.width = `${usedPercentage}%`;
+                            document.getElementById('system-drive-used').textContent = `Used: ${formatBytes(usedSpace)}`;
+                            document.getElementById('system-drive-total').textContent = `Total: ${formatBytes(totalSpace)}`;
+                        }
+                        break;
+                    
+                    case 'SYSTEM_FILES_SIZE':
+                        const systemFilesSize = parseInt(parts[1]) || 0;
+                        console.log("System files size:", systemFilesSize);
+                        document.getElementById('system-files-size').textContent = formatBytes(systemFilesSize);
+                        break;
+                    
+                    case 'DOWNLOADS_SIZE':
+                        const downloadsSize = parseInt(parts[1]) || 0;
+                        console.log("Downloads size:", downloadsSize);
+                        document.getElementById('downloads-size').textContent = formatBytes(downloadsSize);
+                        break;
+                    
+                    case 'RECYCLE_BIN_SIZE':
+                        const recycleBinSize = parseInt(parts[1]) || 0;
+                        console.log("Recycle bin size:", recycleBinSize);
+                        document.getElementById('recyclebin-size').textContent = formatBytes(recycleBinSize);
+                        break;
+                    
+                    case 'TEMP_FILES_SIZE':
+                        const tempFilesSize = parseInt(parts[1]) || 0;
+                        console.log("Temp files size:", tempFilesSize);
+                        document.getElementById('temp-files-size').textContent = formatBytes(tempFilesSize);
+                        break;
+                    
+                    case 'IMAGES_SIZE':
+                        const imagesSize = parseInt(parts[1]) || 0;
+                        console.log("Images size:", imagesSize);
+                        document.getElementById('images-size').textContent = formatBytes(imagesSize);
+                        break;
+                    
+                    case 'VIDEOS_SIZE':
+                        const videosSize = parseInt(parts[1]) || 0;
+                        console.log("Videos size:", videosSize);
+                        document.getElementById('videos-size').textContent = formatBytes(videosSize);
+                        break;
+                    
+                    case 'AUDIO_SIZE':
+                        const audioSize = parseInt(parts[1]) || 0;
+                        console.log("Audio size:", audioSize);
+                        document.getElementById('audio-size').textContent = formatBytes(audioSize);
+                        break;
+                    
+                    case 'DOCUMENTS_SIZE':
+                        const documentsSize = parseInt(parts[1]) || 0;
+                        console.log("Documents size:", documentsSize);
+                        document.getElementById('documents-size').textContent = formatBytes(documentsSize);
+                        break;
+                    
+                    case 'APPS_SIZE':
+                        const appsSize = parseInt(parts[1]) || 0;
+                        console.log("Apps size:", appsSize);
+                        document.getElementById('apps-size').textContent = formatBytes(appsSize);
+                        break;
+                }
+            }
+            
+            // Exibir logs para outros scripts e ocultar o indicador de carregamento quando o script terminar
+            if (data === 'SCRIPT_COMPLETED') {
+                loading.style.display = 'none';
+                console.log("Script completed");
+            } else if (!data.includes('|')) {
+                loading.style.display = 'none';
+                logsSection.style.display = 'block';
+                addOutputLine(data);
+            }
         });
 
         ipcRenderer.on('script-error', (event, data) => {
@@ -787,14 +927,34 @@
             const logsSection = document.getElementById('logs-section');
             
             loading.style.display = 'none';
-            logsSection.style.display = 'block';
-            successMessage.style.display = 'block';
             
-            addOutputLine('Script completed successfully');
+            // Verificar se algum dos valores ainda está como "Scanning..."
+            const pendingValues = [
+                document.getElementById('system-drive-used').textContent,
+                document.getElementById('system-files-size').textContent,
+                document.getElementById('downloads-size').textContent,
+                document.getElementById('recyclebin-size').textContent,
+                document.getElementById('temp-files-size').textContent,
+                document.getElementById('images-size').textContent,
+                document.getElementById('videos-size').textContent,
+                document.getElementById('audio-size').textContent,
+                document.getElementById('documents-size').textContent,
+                document.getElementById('apps-size').textContent
+            ];
             
-            // Atualizar as informações de armazenamento após a conclusão do script
-            getDriveInfo();
-            getStorageBreakdown();
+            const hasIncompleteData = pendingValues.some(value => value === 'Scanning...');
+            
+            if (hasIncompleteData) {
+                // Se ainda tivermos dados incompletos, exibir uma mensagem de aviso
+                logsSection.style.display = 'block';
+                addOutputLine('Some storage data could not be retrieved. This might be due to permission issues.', 'error');
+                addOutputLine('Try refreshing the data or running the application as administrator.');
+            } else {
+                // Se todos os dados foram atualizados, exibir mensagem de sucesso
+                successMessage.style.display = 'block';
+            }
+            
+            addOutputLine('Storage scan completed');
         });
     </script>
 </body>
