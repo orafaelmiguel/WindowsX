@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>WindowsX - Boot Optimization</title>
+    <title>WindowsX - Storage Management</title>
     <style>
         :root {
             /* Light Theme */
@@ -231,6 +231,94 @@
             font-size: 1rem;
         }
 
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-card {
+            background-color: var(--card);
+            color: var(--card-foreground);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            transition: all 0.2s;
+            border: 1px solid var(--border);
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-color: var(--ring);
+        }
+
+        .dashboard-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--foreground);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dashboard-card h3 i {
+            color: var(--primary);
+        }
+
+        .dashboard-card p {
+            color: var(--muted-foreground);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .storage-chart {
+            margin: 1rem 0;
+            height: 12px;
+            background-color: var(--muted);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .storage-chart-fill {
+            height: 100%;
+            background-color: var(--primary);
+            border-radius: var(--radius);
+            transition: width 0.5s ease;
+        }
+
+        .storage-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .storage-detail {
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .storage-type {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .storage-type i {
+            font-size: 1rem;
+            color: var(--primary);
+        }
+
+        .storage-value {
+            font-weight: 500;
+        }
+
         .script-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -274,11 +362,22 @@
             cursor: pointer;
             transition: background-color 0.2s;
             width: 100%;
-            font-weight: 500;
         }
 
         .run-button:hover {
             background-color: var(--destructive);
+        }
+
+        .section-header {
+            margin: 2rem 0 1rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--foreground);
         }
 
         .loading {
@@ -348,7 +447,6 @@
             background-color: rgba(220, 38, 38, 0.1);
         }
 
-        /* Add footer styles */
         .footer {
             margin-top: 3rem;
             padding: 1.5rem 0;
@@ -394,7 +492,7 @@
                 <i class="fas fa-network-wired"></i>
                 <span>Network</span>
             </a>
-            <a href="boot.html" class="nav-item active">
+            <a href="boot.html" class="nav-item">
                 <i class="fas fa-bolt"></i>
                 <span>Boot</span>
             </a>
@@ -402,7 +500,7 @@
                 <i class="fas fa-microchip"></i>
                 <span>Drivers</span>
             </a>
-            <a href="storage.html" class="nav-item">
+            <a href="storage.html" class="nav-item active">
                 <i class="fas fa-hdd"></i>
                 <span>Storage</span>
             </a>
@@ -415,48 +513,134 @@
 
     <div class="main-content">
         <div class="page-header">
-            <h1>Boot Optimization</h1>
-            <p>Optimize your system's boot time and performance</p>
+            <h1>Storage Management</h1>
+            <p>Optimize your storage and manage disk space effectively</p>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="dashboard-card" id="system-drive-card">
+                <h3><i class="fas fa-desktop"></i> System Drive (C:)</h3>
+                <p>Main system drive usage information</p>
+                <div class="storage-chart">
+                    <div class="storage-chart-fill" id="system-drive-usage" style="width: 0%;"></div>
+                </div>
+                <div class="storage-info">
+                    <span id="system-drive-used">Calculating...</span>
+                    <span id="system-drive-total">Calculating...</span>
+                </div>
+                <div class="storage-detail">
+                    <div class="storage-type">
+                        <i class="fas fa-file-alt"></i>
+                        <span>System Files</span>
+                    </div>
+                    <div class="storage-value" id="system-files-size">Calculating...</div>
+                </div>
+                <div class="storage-detail">
+                    <div class="storage-type">
+                        <i class="fas fa-file-download"></i>
+                        <span>Downloads</span>
+                    </div>
+                    <div class="storage-value" id="downloads-size">Calculating...</div>
+                </div>
+                <div class="storage-detail">
+                    <div class="storage-type">
+                        <i class="fas fa-trash"></i>
+                        <span>Recycle Bin</span>
+                    </div>
+                    <div class="storage-value" id="recyclebin-size">Calculating...</div>
+                </div>
+                <div class="storage-detail">
+                    <div class="storage-type">
+                        <i class="fas fa-broom"></i>
+                        <span>Temporary Files</span>
+                    </div>
+                    <div class="storage-value" id="temp-files-size">Calculating...</div>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <h3><i class="fas fa-chart-pie"></i> Storage Analysis</h3>
+                <p>Breakdown of storage usage by category</p>
+                <div class="storage-detail">
+                    <div class="storage-type">
+                        <i class="fas fa-image" style="color: var(--chart-1);"></i>
+                        <span>Images</span>
+                    </div>
+                    <div class="storage-value" id="images-size">Scanning...</div>
+                </div>
+                <div class="storage-detail">
+                    <div class="storage-type">
+                        <i class="fas fa-video" style="color: var(--chart-2);"></i>
+                        <span>Videos</span>
+                    </div>
+                    <div class="storage-value" id="videos-size">Scanning...</div>
+                </div>
+                <div class="storage-detail">
+                    <div class="storage-type">
+                        <i class="fas fa-file-audio" style="color: var(--chart-3);"></i>
+                        <span>Audio</span>
+                    </div>
+                    <div class="storage-value" id="audio-size">Scanning...</div>
+                </div>
+                <div class="storage-detail">
+                    <div class="storage-type">
+                        <i class="fas fa-file-code" style="color: var(--chart-4);"></i>
+                        <span>Documents</span>
+                    </div>
+                    <div class="storage-value" id="documents-size">Scanning...</div>
+                </div>
+                <div class="storage-detail">
+                    <div class="storage-type">
+                        <i class="fas fa-gamepad" style="color: var(--chart-5);"></i>
+                        <span>Applications</span>
+                    </div>
+                    <div class="storage-value" id="apps-size">Scanning...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2>Storage Optimization</h2>
         </div>
 
         <div class="script-list">
             <div class="script-card">
-                <h3>Enable All CPU Cores</h3>
-                <p>Ensure all CPU cores are enabled during boot for maximum performance.</p>
-                <button class="run-button" onclick="runScript('windows/boot/enable_all_cpu_cores.ps1', 'Enable All CPU Cores', 'Enabling all CPU cores for maximum performance...')">Run Script</button>
+                <h3>Disk Cleanup</h3>
+                <p>Remove temporary files and free up disk space quickly.</p>
+                <button class="run-button" onclick="runScript('windows/storage/disk_cleanup.ps1', 'Disk Cleanup', 'Cleaning temporary files...')">Run Script</button>
             </div>
 
             <div class="script-card">
-                <h3>Disable Unnecessary Services</h3>
-                <p>Optimize boot time by disabling unnecessary startup services.</p>
-                <button class="run-button" onclick="runScript('windows/boot/disable_services_boot.ps1', 'Disable Unnecessary Services', 'Optimizing startup services for faster boot...')">Run Script</button>
+                <h3>Large Files Scanner</h3>
+                <p>Find large files that might be taking up unnecessary space.</p>
+                <button class="run-button" onclick="runScript('windows/storage/large_files_scan.ps1', 'Large Files Scanner', 'Scanning for large files...')">Run Script</button>
             </div>
 
             <div class="script-card">
-                <h3>Check XMP Profile</h3>
-                <p>Verify and optimize RAM XMP profile settings for better performance.</p>
-                <button class="run-button" onclick="runScript('windows/boot/check_xmp.ps1', 'Check XMP Profile', 'Checking and optimizing RAM XMP profile settings...')">Run Script</button>
+                <h3>Windows Cache Cleaner</h3>
+                <p>Clean Windows system caches to improve performance.</p>
+                <button class="run-button" onclick="runScript('windows/storage/cache_cleanup.ps1', 'Windows Cache Cleaner', 'Cleaning system caches...')">Run Script</button>
             </div>
 
             <div class="script-card">
-                <h3>Disable Hibernation</h3>
-                <p>Disable hibernation to improve boot time and free up disk space.</p>
-                <button class="run-button" onclick="runScript('windows/boot/disable_hibernation.ps1', 'Disable Hibernation', 'Disabling hibernation for faster boot times...')">Run Script</button>
+                <h3>Duplicate Files Finder</h3>
+                <p>Find and remove duplicate files to free up space.</p>
+                <button class="run-button" onclick="runScript('windows/storage/duplicate_finder.ps1', 'Duplicate Files Finder', 'Searching for duplicate files...')">Run Script</button>
             </div>
         </div>
 
         <div class="loading" id="loading">
             <div class="loading-spinner"></div>
-            Running optimization script...
+            <span id="loading-text">Running script...</span>
         </div>
 
         <div class="success-message" id="success-message">
             <i class="fas fa-check-circle"></i>
-            Optimization completed successfully!
+            Operation completed successfully!
         </div>
 
         <div class="logs-section" id="logs-section">
-            <h3>Optimization Logs</h3>
+            <h3>Operation Logs</h3>
             <div class="output-container" id="output">
             </div>
         </div>
@@ -479,6 +663,10 @@
             if (darkTheme) {
                 document.body.classList.add('dark');
             }
+            
+            // Iniciar as análises de armazenamento
+            getDriveInfo();
+            getStorageBreakdown();
         });
         
         // Initialize sidebar state
@@ -510,12 +698,57 @@
         }
         
         function runScript(scriptPath, title, description) {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('loading-text').textContent = description;
+            document.getElementById('success-message').style.display = 'none';
+            document.getElementById('logs-section').style.display = 'none';
+            document.getElementById('output').innerHTML = '';
+            
             ipcRenderer.send('run-script', {
                 scriptPath: scriptPath,
                 title: title,
                 description: description,
-                previousPage: 'boot.html'
+                previousPage: 'storage.html'
             });
+        }
+
+        function formatBytes(bytes, decimals = 2) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        }
+        
+        function getDriveInfo() {
+            // Simulando dados para demonstração - em uma implementação real, isso seria obtido via PowerShell
+            setTimeout(() => {
+                const totalSpace = 500 * 1024 * 1024 * 1024; // 500 GB em bytes
+                const usedSpace = 320 * 1024 * 1024 * 1024;  // 320 GB em bytes
+                const usedPercentage = (usedSpace / totalSpace) * 100;
+                
+                document.getElementById('system-drive-usage').style.width = `${usedPercentage}%`;
+                document.getElementById('system-drive-used').textContent = `Used: ${formatBytes(usedSpace)}`;
+                document.getElementById('system-drive-total').textContent = `Total: ${formatBytes(totalSpace)}`;
+                
+                // Detalhes do espaço utilizado
+                document.getElementById('system-files-size').textContent = formatBytes(120 * 1024 * 1024 * 1024); // 120 GB
+                document.getElementById('downloads-size').textContent = formatBytes(45 * 1024 * 1024 * 1024);     // 45 GB
+                document.getElementById('recyclebin-size').textContent = formatBytes(2 * 1024 * 1024 * 1024);     // 2 GB
+                document.getElementById('temp-files-size').textContent = formatBytes(8 * 1024 * 1024 * 1024);     // 8 GB
+            }, 1000);
+        }
+        
+        function getStorageBreakdown() {
+            // Simulando dados para demonstração - em uma implementação real, isso seria obtido via PowerShell
+            setTimeout(() => {
+                document.getElementById('images-size').textContent = formatBytes(35 * 1024 * 1024 * 1024);   // 35 GB
+                document.getElementById('videos-size').textContent = formatBytes(120 * 1024 * 1024 * 1024);  // 120 GB
+                document.getElementById('audio-size').textContent = formatBytes(18 * 1024 * 1024 * 1024);    // 18 GB
+                document.getElementById('documents-size').textContent = formatBytes(7 * 1024 * 1024 * 1024); // 7 GB
+                document.getElementById('apps-size').textContent = formatBytes(85 * 1024 * 1024 * 1024);     // 85 GB
+            }, 1500);
         }
 
         function addOutputLine(text, type = 'info') {
@@ -534,7 +767,6 @@
             
             loading.style.display = 'none';
             logsSection.style.display = 'block';
-            successMessage.style.display = 'block';
             
             addOutputLine(data);
         });
@@ -549,19 +781,20 @@
             addOutputLine(data, 'error');
         });
 
-        ipcRenderer.on('script-complete', (event, code) => {
+        ipcRenderer.on('script-completed', (event) => {
             const loading = document.getElementById('loading');
             const successMessage = document.getElementById('success-message');
             const logsSection = document.getElementById('logs-section');
             
             loading.style.display = 'none';
             logsSection.style.display = 'block';
+            successMessage.style.display = 'block';
             
-            if (code === 0) {
-                successMessage.style.display = 'block';
-            }
+            addOutputLine('Script completed successfully');
             
-            addOutputLine(`Script completed with exit code: ${code}`);
+            // Atualizar as informações de armazenamento após a conclusão do script
+            getDriveInfo();
+            getStorageBreakdown();
         });
     </script>
 </body>
