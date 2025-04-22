@@ -170,6 +170,159 @@ function Get-TempFilesSize {
     }
 }
 
+# Get installed applications size - Enhanced to be more comprehensive
+function Get-InstalledApplicationsSize {
+    if (-not (Should-ScanSystemFiles)) {
+        Write-Output "APPS_SIZE|0"
+        return
+    }
+    
+    Write-Output "Scanning installed applications (comprehensive)..."
+    
+    $appSize = 0
+    $scannedPaths = @{}  # Track already scanned paths to avoid double-counting
+    
+    # List of common program installation directories to scan
+    $programDirs = @(
+        "$env:ProgramFiles",
+        "${env:ProgramFiles(x86)}"
+    )
+    
+    # Add Steam, Epic, and other game store directories if they exist
+    $gameDirs = @(
+        "C:\Program Files (x86)\Steam\steamapps\common",
+        "C:\Program Files\Steam\steamapps\common",
+        "C:\Program Files\Epic Games",
+        "C:\Program Files (x86)\Origin Games",
+        "C:\Program Files\EA Games",
+        "C:\Program Files (x86)\Ubisoft"
+    )
+    
+    # Scan all drives if specified
+    if ($drivesToScan.Count -gt 0) {
+        foreach ($drive in $drivesToScan) {
+            # Add only non-C: drive game directories
+            if ($drive -ne "C:") {
+                $gameDirs += "$drive\SteamLibrary\steamapps\common"
+                $gameDirs += "$drive\Steam\steamapps\common"
+                $gameDirs += "$drive\Epic Games"
+                $gameDirs += "$drive\Games"
+            }
+        }
+    }
+    
+    # Combine both program and game directories
+    $allAppDirs = $programDirs + $gameDirs
+    
+    # Scan all directories
+    foreach ($dir in $allAppDirs) {
+        if ((Test-Path $dir) -and (-not $scannedPaths.ContainsKey($dir.ToLower()))) {
+            try {
+                Write-Output "Scanning directory: $dir"
+                $scannedPaths[$dir.ToLower()] = $true  # Mark as scanned to avoid duplicates
+                
+                # Skip Windows and System directories within Program Files to avoid counting OS files
+                $items = Get-ChildItem -Path $dir -ErrorAction SilentlyContinue | 
+                         Where-Object { 
+                             ($_.Name -ne "Windows") -and 
+                             ($_.Name -ne "WindowsApps") -and 
+                             ($_.Name -ne "System32") -and
+                             ($_.Name -ne "Microsoft") -and
+                             ($_.Name -ne "Common Files") -and
+                             ($_.Name -ne "Windows Defender") -and
+                             ($_.Name -ne "Windows NT") -and
+                             ($_.Name -ne "Windows Kits") -and
+                             ($_.Name -ne "Windows Portable Devices") -and
+                             ($_.Name -ne "Windows Sidebar")
+                         }
+                
+                # Process each app directory individually to avoid monolithic scan that can time out
+                foreach ($item in $items) {
+                    if (Test-Path $item.FullName) {
+                        $size = (Get-ChildItem -Path $item.FullName -Recurse -ErrorAction SilentlyContinue | 
+                                Measure-Object -Property Length -Sum -ErrorAction SilentlyContinue).Sum
+                        
+                        if ($null -ne $size -and $size -gt 0) {
+                            $appSize += $size
+                            # Log only larger applications (>100MB) to reduce noise
+                            if ($size -gt 100MB) {
+                                $sizeInGB = ($size / 1GB).ToString('F2')
+                                Write-Output "Found $sizeInGB GB for $($item.Name)"
+                            }
+                        }
+                    }
+                }
+            } catch {
+                Write-Output "Error scanning directory $dir : $_"
+            }
+        }
+    }
+    
+    # Scan registry for installed applications, but only adding locations we haven't already scanned
+    try {
+        $registryPaths = @(
+            "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*",
+            "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*"
+        )
+        
+        foreach ($path in $registryPaths) {
+            $apps = Get-ItemProperty -Path $path -ErrorAction SilentlyContinue
+            
+            foreach ($app in $apps) {
+                if ($app.InstallLocation -and (Test-Path $app.InstallLocation)) {
+                    $location = $app.InstallLocation.TrimEnd('\')
+                    
+                    # Skip if already scanned or part of an already scanned directory
+                    $alreadyScanned = $false
+                    if ($scannedPaths.ContainsKey($location.ToLower())) {
+                        $alreadyScanned = $true
+                    } else {
+                        foreach ($scannedPath in $scannedPaths.Keys) {
+                            if ($location.ToLower().StartsWith($scannedPath)) {
+                                $alreadyScanned = $true
+                                break
+                            }
+                        }
+                    }
+                    
+                    # Skip Microsoft and system applications to avoid counting OS files
+                    $skipApp = $false
+                    $skipKeywords = @('Microsoft', 'Windows', 'System', 'Driver', '.NET', 'Runtime', 'Update', 'Hotfix')
+                    foreach ($keyword in $skipKeywords) {
+                        if ($app.DisplayName -and $app.DisplayName.Contains($keyword)) {
+                            $skipApp = $true
+                            break
+                        }
+                    }
+                    
+                    if (-not $alreadyScanned -and -not $skipApp) {
+                        Write-Output "Scanning from registry: $($app.DisplayName) at $location"
+                        $scannedPaths[$location.ToLower()] = $true
+                        
+                        $size = (Get-ChildItem -Path $location -Recurse -ErrorAction SilentlyContinue | 
+                               Measure-Object -Property Length -Sum -ErrorAction SilentlyContinue).Sum
+                        
+                        if ($null -ne $size -and $size -gt 0) {
+                            $appSize += $size
+                            if ($size -gt 1GB) {
+                                $sizeInGB = ($size / 1GB).ToString('F2')
+                                Write-Output "Found $sizeInGB GB for $($app.DisplayName)"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    } catch {
+        Write-Output "Error scanning registry for applications: $_"
+    }
+    
+    # Ensure the value is not null
+    if ($null -eq $appSize) { $appSize = 0 }
+    
+    Write-Output "APPS_SIZE|$appSize"
+}
+
 # Get files by type
 function Get-FilesByType {
     # Skip if C: drive is not selected
@@ -178,7 +331,6 @@ function Get-FilesByType {
         Write-Output "VIDEOS_SIZE|0"
         Write-Output "AUDIO_SIZE|0"
         Write-Output "DOCUMENTS_SIZE|0"
-        Write-Output "APPS_SIZE|0"
         return
     }
     
@@ -195,16 +347,14 @@ function Get-FilesByType {
     
     # Define file types
     $imageExtensions = @('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp')
-    $videoExtensions = @('.mp4', '.avi', '.mkv', '.mov', '.wmv', '.flv', '.webm')
-    $audioExtensions = @('.mp3', '.wav', '.ogg', '.flac', '.aac', '.wma', '.m4a')
-    $documentExtensions = @('.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.txt', '.rtf')
-    $appExtensions = @('.exe', '.msi', '.appx', '.msix')
+    $videoExtensions = @('.mp4', '.avi', '.mkv', '.mov', '.wmv', '.flv', '.webm', '.m4v', '.3gp', '.mpg', '.mpeg')
+    $audioExtensions = @('.mp3', '.wav', '.ogg', '.flac', '.aac', '.wma', '.m4a', '.opus')
+    $documentExtensions = @('.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.txt', '.rtf', '.csv', '.odt', '.ods', '.odp')
     
     $imageSize = 0
     $videoSize = 0
     $audioSize = 0
     $documentSize = 0
-    $appSize = 0
     
     foreach ($folder in $scanFolders) {
         if (Test-Path $folder) {
@@ -222,8 +372,6 @@ function Get-FilesByType {
                         $audioSize += $file.Length
                     } elseif ($documentExtensions -contains $extension) {
                         $documentSize += $file.Length
-                    } elseif ($appExtensions -contains $extension) {
-                        $appSize += $file.Length
                     }
                 }
             } catch {
@@ -237,13 +385,11 @@ function Get-FilesByType {
     if ($null -eq $videoSize) { $videoSize = 0 }
     if ($null -eq $audioSize) { $audioSize = 0 }
     if ($null -eq $documentSize) { $documentSize = 0 }
-    if ($null -eq $appSize) { $appSize = 0 }
     
     Write-Output "IMAGES_SIZE|$imageSize"
     Write-Output "VIDEOS_SIZE|$videoSize"
     Write-Output "AUDIO_SIZE|$audioSize"
     Write-Output "DOCUMENTS_SIZE|$documentSize"
-    Write-Output "APPS_SIZE|$appSize"
 }
 
 # Run all scans
@@ -253,6 +399,7 @@ Get-DownloadsSize
 Get-RecycleBinSize
 Get-TempFilesSize
 Get-FilesByType
+Get-InstalledApplicationsSize
 
 Write-Output "Storage scan completed."
 Write-Output "SCRIPT_COMPLETED" 

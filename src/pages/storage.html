@@ -1023,11 +1023,24 @@
                 // Ocultar o botão de refresh durante o scan
                 document.getElementById('refreshButton').style.display = 'none';
                 
-                // Re-detect drives first
-                detectAvailableDrives();
+                // Get the current visible drive cards
+                const driveCards = document.querySelectorAll('.drive-card');
                 
-                // Iniciar nova análise (all drives)
-                getDriveInfo();
+                // Extract the drive letters from the card IDs
+                const driveLetters = Array.from(driveCards).map(card => {
+                    // drive-card-C becomes C:
+                    const driveId = card.id.replace('drive-card-', '');
+                    return `${driveId}:`;
+                });
+                
+                // If no drives are visible, re-detect and scan all
+                if (driveLetters.length === 0) {
+                    detectAvailableDrives();
+                    getDriveInfo();
+                } else {
+                    // Scan only the currently visible drives
+                    getDriveInfo(driveLetters);
+                }
             });
         });
         
