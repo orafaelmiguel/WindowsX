@@ -219,9 +219,7 @@ function Get-InstalledApplicationsSize {
         if ((Test-Path $dir) -and (-not $scannedPaths.ContainsKey($dir.ToLower()))) {
             try {
                 Write-Output "Scanning directory: $dir"
-                $scannedPaths[$dir.ToLower()] = $true  # Mark as scanned to avoid duplicates
-                
-                # Skip Windows and System directories within Program Files to avoid counting OS files
+                $scannedPaths[$dir.ToLower()] = $true  
                 $items = Get-ChildItem -Path $dir -ErrorAction SilentlyContinue | 
                          Where-Object { 
                              ($_.Name -ne "Windows") -and 
@@ -235,8 +233,6 @@ function Get-InstalledApplicationsSize {
                              ($_.Name -ne "Windows Portable Devices") -and
                              ($_.Name -ne "Windows Sidebar")
                          }
-                
-                # Process each app directory individually to avoid monolithic scan that can time out
                 foreach ($item in $items) {
                     if (Test-Path $item.FullName) {
                         $size = (Get-ChildItem -Path $item.FullName -Recurse -ErrorAction SilentlyContinue | 
@@ -244,7 +240,6 @@ function Get-InstalledApplicationsSize {
                         
                         if ($null -ne $size -and $size -gt 0) {
                             $appSize += $size
-                            # Log only larger applications (>100MB) to reduce noise
                             if ($size -gt 100MB) {
                                 $sizeInGB = ($size / 1GB).ToString('F2')
                                 Write-Output "Found $sizeInGB GB for $($item.Name)"
