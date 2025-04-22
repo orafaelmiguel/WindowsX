@@ -196,12 +196,8 @@ app.on('activate', () => {
 
 // Handle navigation
 ipcMain.on('navigate-to', (event, page) => {
-  // If the user clicks on settings, open settings window
-  if (page === 'settings.html') {
-    createSettingsWindow();
-  } else {
-    mainWindow.loadFile(path.join(__dirname, 'pages', page));
-  }
+  // Agora todas as páginas são carregadas na janela principal, incluindo settings
+  mainWindow.loadFile(path.join(__dirname, 'pages', page));
 });
 
 // Handle script execution
@@ -311,15 +307,15 @@ ipcMain.on('run-powershell-script', (event, scriptPath) => {
   });
 });
 
-// Settings window handlers
+// Settings window handlers - agora gerenciados pela página, não pela janela
 ipcMain.on('open-settings-window', () => {
-  createSettingsWindow();
+  // Carregar página de configurações na janela principal
+  mainWindow.loadFile(path.join(__dirname, 'pages', 'settings.html'));
 });
 
+// Remover handle para fechar a janela de configurações, pois ela não existe mais
 ipcMain.on('close-settings-window', () => {
-  if (settingsWindow) {
-    settingsWindow.close();
-  }
+  // Não é mais necessário
 });
 
 ipcMain.on('get-settings', (event) => {

@@ -5,6 +5,7 @@
     <title>WindowsX - Settings</title>
     <style>
         :root {
+            /* Light Theme */
             --radius: 0.5rem;
             --background: #ffffff;
             --foreground: #1a1a1a;
@@ -26,6 +27,16 @@
             --ring: #e11d48;
             --switch-on: #10b981;
             --switch-off: #9ca3af;
+            --sidebar: #ffffff;
+            --sidebar-foreground: #1a1a1a;
+            --sidebar-primary: #e11d48;
+            --sidebar-primary-foreground: #ffffff;
+            --sidebar-accent: #f3f4f6;
+            --sidebar-accent-foreground: #1a1a1a;
+            --sidebar-border: #e5e7eb;
+            --sidebar-ring: #e11d48;
+            --sidebar-width: 240px;
+            --sidebar-collapsed-width: 60px;
         }
 
         .dark {
@@ -49,6 +60,14 @@
             --ring: #e11d48;
             --switch-on: #10b981;
             --switch-off: #4b5563;
+            --sidebar: #262626;
+            --sidebar-foreground: #ffffff;
+            --sidebar-primary: #e11d48;
+            --sidebar-primary-foreground: #ffffff;
+            --sidebar-accent: #333333;
+            --sidebar-accent-foreground: #ffffff;
+            --sidebar-border: rgba(255, 255, 255, 0.1);
+            --sidebar-ring: #e11d48;
         }
 
         * {
@@ -61,17 +80,144 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--background);
             color: var(--foreground);
+            display: flex;
             min-height: 100vh;
+        }
+
+        .sidebar {
+            width: var(--sidebar-collapsed-width);
+            background-color: var(--sidebar);
+            color: var(--sidebar-foreground);
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+            border-right: 1px solid var(--sidebar-border);
+            transition: width 0.3s ease;
+            overflow-x: hidden;
+            z-index: 100;
+        }
+
+        .sidebar.expanded {
+            width: var(--sidebar-width);
+        }
+
+        .sidebar-toggle {
+            background-color: var(--sidebar-primary);
+            color: var(--sidebar-primary-foreground);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin: 10px auto;
+            font-size: 1rem;
+        }
+
+        .sidebar-header {
+            padding: 1rem 0.75rem;
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-bottom: 1px solid var(--sidebar-border);
+            text-align: center;
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: var(--sidebar-foreground);
+            white-space: nowrap;
+            overflow: hidden;
+            opacity: 0;
+            max-height: 0;
+            transition: opacity 0.3s, max-height 0.3s;
+        }
+
+        .sidebar.expanded .sidebar-header h1 {
+            opacity: 1;
+            max-height: 50px;
+        }
+
+        .sidebar-header p {
+            color: var(--muted-foreground);
+            font-size: 0.75rem;
+            white-space: nowrap;
+            overflow: hidden;
+            opacity: 0;
+            max-height: 0;
+            transition: opacity 0.3s, max-height 0.3s;
+        }
+
+        .sidebar.expanded .sidebar-header p {
+            opacity: 1;
+            max-height: 50px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.6rem 0.75rem;
+            margin: 0.25rem 0.5rem;
+            border-radius: var(--radius);
+            color: var(--sidebar-accent-foreground);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover {
+            background-color: var(--sidebar-accent);
+            color: var(--sidebar-foreground);
+        }
+
+        .nav-item.active {
+            background-color: var(--sidebar-primary);
+            color: var(--sidebar-primary-foreground);
+        }
+
+        .nav-item i {
+            margin-right: 1rem;
+            font-size: 1rem;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .nav-item span {
+            opacity: 0;
+            display: none;
+            white-space: nowrap;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar.expanded .nav-item span {
+            opacity: 1;
+            display: inline;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-collapsed-width);
             padding: 2rem;
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-content.sidebar-expanded {
+            margin-left: var(--sidebar-width);
+        }
+
+        .settings-container {
+            max-width: 800px;
+            margin: 0 auto;
         }
 
         .header {
             margin-bottom: 2rem;
             border-bottom: 1px solid var(--border);
             padding-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
         }
 
         .header h1 {
@@ -80,23 +226,10 @@
             color: var(--foreground);
         }
 
-        .close-button {
-            background-color: transparent;
-            border: none;
-            color: var(--foreground);
-            font-size: 1.5rem;
-            cursor: pointer;
-            opacity: 0.7;
-            transition: opacity 0.2s;
-        }
-
-        .close-button:hover {
-            opacity: 1;
-        }
-
-        .settings-container {
-            max-width: 800px;
-            margin: 0 auto;
+        .header p {
+            color: var(--muted-foreground);
+            font-size: 1rem;
+            margin-top: 0.5rem;
         }
 
         .section {
@@ -253,60 +386,99 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="settings-container">
-        <div class="header">
-            <h1>Settings</h1>
-            <button class="close-button" id="closeButton">
-                <i class="fas fa-times"></i>
-            </button>
+    <div class="sidebar">
+        <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="sidebar-header">
+            <h1>WindowsX</h1>
+            <p>Optimization Suite</p>
         </div>
-
-        <div class="section">
-            <h2 class="section-title">
+        <nav>
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="network.html" class="nav-item">
+                <i class="fas fa-network-wired"></i>
+                <span>Network</span>
+            </a>
+            <a href="boot.html" class="nav-item">
+                <i class="fas fa-bolt"></i>
+                <span>Boot</span>
+            </a>
+            <a href="drivers.html" class="nav-item">
+                <i class="fas fa-microchip"></i>
+                <span>Drivers</span>
+            </a>
+            <a href="settings.html" class="nav-item active">
                 <i class="fas fa-cog"></i>
-                General
-            </h2>
-            <div class="setting-item">
-                <div class="setting-info">
-                    <h3 class="setting-title">Dark Theme</h3>
-                    <p class="setting-description">Switch between light and dark theme</p>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="themeSwitch">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="setting-item">
-                <div class="setting-info">
-                    <h3 class="setting-title">Start Maximized</h3>
-                    <p class="setting-description">Launch application in maximized window mode</p>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="fullscreenSwitch" checked>
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="setting-item">
-                <div class="setting-info">
-                    <h3 class="setting-title">Run at Startup</h3>
-                    <p class="setting-description">Automatically start WindowsX when Windows boots</p>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="startupSwitch">
-                    <span class="slider"></span>
-                </label>
-            </div>
-        </div>
+                <span>Settings</span>
+            </a>
+        </nav>
+    </div>
 
-        <div class="actions">
-            <button class="button button-secondary" id="resetButton">Reset to Default</button>
-            <button class="button button-primary" id="saveButton">Save Changes</button>
-        </div>
+    <div class="main-content">
+        <div class="settings-container">
+            <div class="header">
+                <h1>Settings</h1>
+                <p>Customize your WindowsX application preferences</p>
+            </div>
 
-        <div class="footer">
-            <div class="footer-content">
-                <p class="footer-copyright">© 2025 WindowsX - Made by Ocean :3</p>
-                <p class="footer-version">v1.0.0</p>
+            <div class="section">
+                <h2 class="section-title">
+                    <i class="fas fa-palette"></i>
+                    Appearance
+                </h2>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3 class="setting-title">Dark Theme</h3>
+                        <p class="setting-description">Switch between light and dark theme</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="themeSwitch">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3 class="setting-title">Start Maximized</h3>
+                        <p class="setting-description">Launch application in maximized window mode</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="fullscreenSwitch" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">
+                    <i class="fas fa-cog"></i>
+                    System
+                </h2>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3 class="setting-title">Run at Startup</h3>
+                        <p class="setting-description">Automatically start WindowsX when Windows boots</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="startupSwitch">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="button button-secondary" id="resetButton">Reset to Default</button>
+                <button class="button button-primary" id="saveButton">Save Changes</button>
+            </div>
+
+            <div class="footer">
+                <div class="footer-content">
+                    <p class="footer-copyright">© 2025 WindowsX - Made by Ocean :3</p>
+                    <p class="footer-version">v1.0.0</p>
+                </div>
             </div>
         </div>
     </div>
@@ -314,22 +486,49 @@
     <script>
         const { ipcRenderer } = require('electron');
         
+        // Verificar e aplicar o tema ao carregar a página
+        document.addEventListener('DOMContentLoaded', () => {
+            // Verificar o tema salvo no localStorage
+            const darkTheme = localStorage.getItem('darkTheme') === 'true';
+            if (darkTheme) {
+                document.body.classList.add('dark');
+            }
+        });
+        
+        // Initialize sidebar state
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if sidebar state is stored in localStorage
+            const sidebarExpanded = localStorage.getItem('sidebarExpanded') === 'true';
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            
+            if (sidebarExpanded) {
+                sidebar.classList.add('expanded');
+                mainContent.classList.add('sidebar-expanded');
+            }
+        });
+        
+        // Toggle sidebar
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            sidebar.classList.toggle('expanded');
+            mainContent.classList.toggle('sidebar-expanded');
+            
+            // Store sidebar state in localStorage
+            localStorage.setItem('sidebarExpanded', sidebar.classList.contains('expanded'));
+        });
+        
         // Get DOM elements
-        const closeButton = document.getElementById('closeButton');
         const themeSwitch = document.getElementById('themeSwitch');
         const saveButton = document.getElementById('saveButton');
         const resetButton = document.getElementById('resetButton');
-        
-        // Close window
-        closeButton.addEventListener('click', () => {
-            ipcRenderer.send('close-settings-window');
-        });
         
         // Toggle theme
         themeSwitch.addEventListener('change', () => {
             const isDark = themeSwitch.checked;
             
-            // Atualiza a aparência da janela de configurações
+            // Atualiza a aparência da página de configurações
             if (isDark) {
                 document.body.classList.add('dark');
             } else {
@@ -388,6 +587,10 @@
         document.addEventListener('DOMContentLoaded', () => {
             ipcRenderer.send('get-settings');
         });
+        
+        function navigateTo(page) {
+            ipcRenderer.send('navigate-to', page);
+        }
     </script>
 </body>
 </html> 
