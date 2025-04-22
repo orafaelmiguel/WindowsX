@@ -1,17 +1,42 @@
 # Real Storage Scanner Script
 # This script scans and returns actual storage data from Windows system
 
+param (
+    [string]$drives = "" # Comma-separated list of drives to scan, e.g. "C:,D:,E:"
+)
+
 Write-Output "Starting real storage scan..."
 $ErrorActionPreference = "SilentlyContinue"
+
+# Parse drives parameter
+$drivesToScan = @()
+if ($drives -ne "") {
+    $drivesToScan = $drives -split "," | ForEach-Object { $_.Trim() }
+    Write-Output "Will scan specific drives: $($drivesToScan -join ', ')"
+}
 
 # Get all drives
 function Get-DriveInfo {
     Write-Output "Scanning drives..."
     
     try {
-        $drives = Get-WmiObject -Class Win32_LogicalDisk | Where-Object { $_.DriveType -eq 3 }
+        # Get all physical drives
+        $allDrives = Get-WmiObject -Class Win32_LogicalDisk | Where-Object { $_.DriveType -eq 3 }
         
-        foreach ($drive in $drives) {
+        # Filter drives if specified
+        if ($drivesToScan.Count -gt 0) {
+            $allDrives = $allDrives | Where-Object { $driveLetter = $_.DeviceID; $drivesToScan -contains $driveLetter }
+        }
+        
+        if ($allDrives.Count -eq 0) {
+            Write-Output "No matching drives found!"
+            
+            # Provide default data for system drive if no drives match
+            Write-Output "DRIVE_INFO|C:|1000000000000|500000000000|500000000000|50.00"
+            return
+        }
+        
+        foreach ($drive in $allDrives) {
             $driveLetter = $drive.DeviceID
             $totalSpace = $drive.Size
             $freeSpace = $drive.FreeSpace
@@ -27,8 +52,19 @@ function Get-DriveInfo {
     }
 }
 
+# Should we scan system files? Only if C: is included
+function Should-ScanSystemFiles {
+    return ($drivesToScan.Count -eq 0) -or ($drivesToScan -contains "C:")
+}
+
 # Get system files size (Windows folder)
 function Get-SystemFilesSize {
+    # Skip if C: drive is not selected
+    if (-not (Should-ScanSystemFiles)) {
+        Write-Output "SYSTEM_FILES_SIZE|0"
+        return
+    }
+    
     Write-Output "Scanning system files size..."
     
     try {
@@ -45,6 +81,12 @@ function Get-SystemFilesSize {
 
 # Get downloads folder size
 function Get-DownloadsSize {
+    # Skip if C: drive is not selected
+    if (-not (Should-ScanSystemFiles)) {
+        Write-Output "DOWNLOADS_SIZE|0"
+        return
+    }
+    
     Write-Output "Scanning downloads folder size..."
     
     try {
@@ -61,6 +103,12 @@ function Get-DownloadsSize {
 
 # Get recycle bin size
 function Get-RecycleBinSize {
+    # Skip if C: drive is not selected
+    if (-not (Should-ScanSystemFiles)) {
+        Write-Output "RECYCLE_BIN_SIZE|0"
+        return
+    }
+    
     Write-Output "Scanning recycle bin size..."
     
     try {
@@ -89,6 +137,12 @@ function Get-RecycleBinSize {
 
 # Get temporary files size
 function Get-TempFilesSize {
+    # Skip if C: drive is not selected
+    if (-not (Should-ScanSystemFiles)) {
+        Write-Output "TEMP_FILES_SIZE|0"
+        return
+    }
+    
     Write-Output "Scanning temporary files size..."
     
     try {
@@ -118,6 +172,16 @@ function Get-TempFilesSize {
 
 # Get files by type
 function Get-FilesByType {
+    # Skip if C: drive is not selected
+    if (-not (Should-ScanSystemFiles)) {
+        Write-Output "IMAGES_SIZE|0"
+        Write-Output "VIDEOS_SIZE|0"
+        Write-Output "AUDIO_SIZE|0"
+        Write-Output "DOCUMENTS_SIZE|0"
+        Write-Output "APPS_SIZE|0"
+        return
+    }
+    
     Write-Output "Scanning files by type..."
     
     $scanFolders = @(

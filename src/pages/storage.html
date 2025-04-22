@@ -269,6 +269,50 @@
             margin-bottom: 2rem;
         }
 
+        #drives-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            width: 100%;
+        }
+
+        .drive-card {
+            background-color: var(--card);
+            color: var(--card-foreground);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            transition: all 0.2s;
+            border: 1px solid var(--border);
+        }
+
+        .drive-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-color: var(--ring);
+        }
+
+        .drive-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--foreground);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .drive-card h3 i {
+            color: var(--primary);
+        }
+
+        .drive-card-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 0.8rem;
+            color: var(--muted-foreground);
+        }
+
         .dashboard-card {
             background-color: var(--card);
             color: var(--card-foreground);
@@ -414,19 +458,51 @@
         .loading {
             display: none;
             text-align: center;
-            margin: 1.5rem 0;
+            margin: 2rem auto;
+            padding: 1.5rem;
             color: var(--muted-foreground);
+            flex-direction: column;
+            align-items: center;
+            max-width: 450px;
+            background-color: var(--card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
         }
 
         .loading-spinner {
             display: inline-block;
-            width: 20px;
-            height: 20px;
+            width: 36px;
+            height: 36px;
             border: 3px solid var(--muted);
             border-radius: 50%;
             border-top-color: var(--primary);
             animation: spin 1s ease-in-out infinite;
-            margin-right: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .progress-container {
+            width: 100%;
+            max-width: 350px;
+            margin: 1rem 0;
+            height: 8px;
+            background-color: var(--muted);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--foreground);
+            margin-top: 0.75rem;
         }
 
         @keyframes spin {
@@ -436,6 +512,26 @@
         .success-message {
             display: none;
             background-color: var(--chart-2);
+            color: var(--primary-foreground);
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .warning-message {
+            display: none;
+            background-color: var(--chart-1);
+            color: var(--primary-foreground);
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .error-message {
+            display: none;
+            background-color: var(--destructive);
             color: var(--primary-foreground);
             padding: 1rem;
             border-radius: var(--radius);
@@ -501,6 +597,183 @@
             margin: 0;
             opacity: 0.7;
         }
+
+        .scan-storage-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 1rem 0 2rem 0;
+            padding: 1rem;
+            background-color: var(--card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+
+        .scan-storage-button {
+            background-color: var(--primary);
+            color: var(--primary-foreground);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+        }
+
+        .scan-storage-button:hover {
+            background-color: var(--destructive);
+            transform: translateY(-2px);
+        }
+
+        .scan-storage-button:disabled {
+            background-color: var(--muted);
+            color: var(--muted-foreground);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .scan-storage-button:disabled:hover {
+            background-color: var(--muted);
+            transform: none;
+        }
+
+        .scan-storage-button i {
+            font-size: 1.25rem;
+        }
+
+        .scan-storage-info {
+            color: var(--muted-foreground);
+            font-size: 0.875rem;
+            text-align: center;
+        }
+        
+        .drive-selection-container {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+            margin-top: 1rem;
+        }
+        
+        .drive-selection-title {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            color: var(--muted-foreground);
+            text-align: center;
+        }
+        
+        .drive-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .drive-chip {
+            padding: 0.5rem 1.25rem;
+            background-color: var(--muted);
+            border: 1px solid transparent;
+            border-radius: 2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+        
+        .drive-chip:hover {
+            background-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .drive-chip.selected {
+            background-color: var(--primary);
+            color: var(--primary-foreground);
+            box-shadow: 0 2px 8px rgba(225, 29, 72, 0.3);
+        }
+        
+        .drive-chip.system {
+            border-color: var(--primary);
+        }
+        
+        .drive-chip i {
+            font-size: 0.85rem;
+        }
+        
+        .scan-selected-button {
+            align-self: center;
+            background-color: var(--primary);
+            color: var(--primary-foreground);
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+        
+        .scan-selected-button:hover {
+            background-color: var(--destructive);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .scan-selected-button:disabled {
+            background-color: var(--muted);
+            color: var(--muted-foreground);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .scan-counter {
+            background-color: var(--background);
+            color: var(--foreground);
+            border-radius: 50%;
+            width: 1.25rem;
+            height: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            margin-left: 0.25rem;
+        }
+
+        .drives-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .drive-card {
+            background-color: var(--accent);
+            color: var(--card-foreground);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            transition: all 0.2s;
+            border: 1px solid var(--border);
+        }
+
+        .drive-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-color: var(--ring);
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -546,90 +819,99 @@
         <div class="page-header">
             <h1>Storage Management</h1>
             <p>Optimize your storage and manage disk space effectively</p>
-            <button id="refreshButton" class="refresh-button" title="Refresh Storage Data">
+            <button id="refreshButton" class="refresh-button" title="Refresh Storage Data" style="display: none;">
                 <i class="fas fa-sync-alt"></i> Refresh Data
             </button>
         </div>
 
         <div class="dashboard-grid">
-            <div class="dashboard-card" id="system-drive-card">
-                <h3><i class="fas fa-desktop"></i> System Drive (C:)</h3>
-                <p>Main system drive usage information</p>
-                <div class="storage-chart">
-                    <div class="storage-chart-fill" id="system-drive-usage" style="width: 0%;"></div>
+            <div class="dashboard-card">
+                <h3><i class="fas fa-hdd"></i> Storage Dashboard</h3>
+                <p>Overview of storage devices and usage breakdown</p>
+                
+                <div id="drives-container">
+                    <!-- Drive cards will be added here dynamically -->
                 </div>
-                <div class="storage-info">
-                    <span id="system-drive-used">Scanning...</span>
-                    <span id="system-drive-total">Please wait</span>
-                </div>
-                <div class="storage-detail">
-                    <div class="storage-type">
-                        <i class="fas fa-file-alt"></i>
-                        <span>System Files</span>
+                
+                <div id="storage-analysis-section" style="display: none; margin-top: 1.5rem;">
+                    <h4 style="margin: 1rem 0 0.75rem; font-size: 1.1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);">
+                        <i class="fas fa-chart-pie" style="color: var(--primary); margin-right: 0.5rem;"></i> 
+                        Storage Analysis
+                    </h4>
+                    
+                    <div class="storage-detail">
+                        <div class="storage-type">
+                            <i class="fas fa-image" style="color: var(--chart-1);"></i>
+                            <span>Images</span>
+                        </div>
+                        <div class="storage-value" id="images-size">Not scanned</div>
                     </div>
-                    <div class="storage-value" id="system-files-size">Scanning...</div>
-                </div>
-                <div class="storage-detail">
-                    <div class="storage-type">
-                        <i class="fas fa-file-download"></i>
-                        <span>Downloads</span>
+                    <div class="storage-detail">
+                        <div class="storage-type">
+                            <i class="fas fa-video" style="color: var(--chart-2);"></i>
+                            <span>Videos</span>
+                        </div>
+                        <div class="storage-value" id="videos-size">Not scanned</div>
                     </div>
-                    <div class="storage-value" id="downloads-size">Scanning...</div>
-                </div>
-                <div class="storage-detail">
-                    <div class="storage-type">
-                        <i class="fas fa-trash"></i>
-                        <span>Recycle Bin</span>
+                    <div class="storage-detail">
+                        <div class="storage-type">
+                            <i class="fas fa-file-audio" style="color: var(--chart-3);"></i>
+                            <span>Audio</span>
+                        </div>
+                        <div class="storage-value" id="audio-size">Not scanned</div>
                     </div>
-                    <div class="storage-value" id="recyclebin-size">Scanning...</div>
-                </div>
-                <div class="storage-detail">
-                    <div class="storage-type">
-                        <i class="fas fa-broom"></i>
-                        <span>Temporary Files</span>
+                    <div class="storage-detail">
+                        <div class="storage-type">
+                            <i class="fas fa-file-code" style="color: var(--chart-4);"></i>
+                            <span>Documents</span>
+                        </div>
+                        <div class="storage-value" id="documents-size">Not scanned</div>
                     </div>
-                    <div class="storage-value" id="temp-files-size">Scanning...</div>
+                    <div class="storage-detail">
+                        <div class="storage-type">
+                            <i class="fas fa-gamepad" style="color: var(--chart-5);"></i>
+                            <span>Applications</span>
+                        </div>
+                        <div class="storage-value" id="apps-size">Not scanned</div>
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <div class="dashboard-card">
-                <h3><i class="fas fa-chart-pie"></i> Storage Analysis</h3>
-                <p>Breakdown of storage usage by category</p>
-                <div class="storage-detail">
-                    <div class="storage-type">
-                        <i class="fas fa-image" style="color: var(--chart-1);"></i>
-                        <span>Images</span>
-                    </div>
-                    <div class="storage-value" id="images-size">Scanning...</div>
+        <div class="scan-storage-container">
+            <button id="scanStorageButton" class="scan-storage-button">
+                <i class="fas fa-hdd"></i> Scan Storage
+            </button>
+            <p class="scan-storage-info" id="scan-storage-info">Click the button above to analyze your storage usage. This will require administrator privileges.</p>
+            
+            <div id="driveSelectionContainer" class="drive-selection-container">
+                <p class="drive-selection-title">Select drives to scan</p>
+                <div id="driveChips" class="drive-chips">
+                    <!-- Drive chips will be added here dynamically -->
                 </div>
-                <div class="storage-detail">
-                    <div class="storage-type">
-                        <i class="fas fa-video" style="color: var(--chart-2);"></i>
-                        <span>Videos</span>
-                    </div>
-                    <div class="storage-value" id="videos-size">Scanning...</div>
-                </div>
-                <div class="storage-detail">
-                    <div class="storage-type">
-                        <i class="fas fa-file-audio" style="color: var(--chart-3);"></i>
-                        <span>Audio</span>
-                    </div>
-                    <div class="storage-value" id="audio-size">Scanning...</div>
-                </div>
-                <div class="storage-detail">
-                    <div class="storage-type">
-                        <i class="fas fa-file-code" style="color: var(--chart-4);"></i>
-                        <span>Documents</span>
-                    </div>
-                    <div class="storage-value" id="documents-size">Scanning...</div>
-                </div>
-                <div class="storage-detail">
-                    <div class="storage-type">
-                        <i class="fas fa-gamepad" style="color: var(--chart-5);"></i>
-                        <span>Applications</span>
-                    </div>
-                    <div class="storage-value" id="apps-size">Scanning...</div>
-                </div>
+                <button id="scanSelectedButton" class="scan-selected-button">
+                    <i class="fas fa-play"></i> Scan Selected
+                    <span id="selectedCounter" class="scan-counter">0</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <div class="progress-text" id="progress-text">Scanning storage, please wait...</div>
+            <div class="progress-container">
+                <div class="progress-bar" id="scan-progress-bar"></div>
+            </div>
+        </div>
+
+        <div class="success-message" id="success-message">
+            <i class="fas fa-check-circle"></i>
+            Operation completed successfully!
+        </div>
+
+        <div class="logs-section" id="logs-section">
+            <h3>Operation Logs</h3>
+            <div class="output-container" id="output">
             </div>
         </div>
 
@@ -663,22 +945,6 @@
             </div>
         </div>
 
-        <div class="loading" id="loading">
-            <div class="loading-spinner"></div>
-            <span id="loading-text">Running script...</span>
-        </div>
-
-        <div class="success-message" id="success-message">
-            <i class="fas fa-check-circle"></i>
-            Operation completed successfully!
-        </div>
-
-        <div class="logs-section" id="logs-section">
-            <h3>Operation Logs</h3>
-            <div class="output-container" id="output">
-            </div>
-        </div>
-
         <div class="footer">
             <div class="footer-content">
                 <p class="footer-copyright">© 2025 WindowsX - Made by Ocean :3</p>
@@ -690,6 +956,10 @@
     <script>
         const { ipcRenderer } = require('electron');
         
+        // Available drives detected
+        let availableDrives = [];
+        let selectedDrives = [];
+        
         // Verificar e aplicar o tema ao carregar a página
         document.addEventListener('DOMContentLoaded', () => {
             // Verificar o tema salvo no localStorage
@@ -698,16 +968,65 @@
                 document.body.classList.add('dark');
             }
             
-            // Iniciar as análises de armazenamento
-            getDriveInfo();
+            // Get available drives when page loads
+            detectAvailableDrives();
+            
+            // Ocultar botão de refresh na inicialização
+            document.getElementById('refreshButton').style.display = 'none';
+            
+            // Adicionar evento de clique ao botão de scan
+            document.getElementById('scanStorageButton').addEventListener('click', () => {
+                // If we have multiple drives, show selection interface
+                if (availableDrives.length > 1) {
+                    showDriveSelectionInterface();
+                } else {
+                    // Otherwise scan immediately
+                    // Limpar displays anteriores
+                    document.getElementById('success-message').style.display = 'none';
+                    document.getElementById('logs-section').style.display = 'none';
+                    
+                    // Ocultar o botão de refresh durante o scan
+                    document.getElementById('refreshButton').style.display = 'none';
+                    
+                    // Iniciar análise de armazenamento
+                    getDriveInfo();
+                }
+            });
+            
+            // Add click event for scan selected button
+            document.getElementById('scanSelectedButton').addEventListener('click', () => {
+                // Check if any drives are selected
+                if (selectedDrives.length === 0) {
+                    alert('Please select at least one drive to scan.');
+                    return;
+                }
+                
+                // Clear displays
+                document.getElementById('success-message').style.display = 'none';
+                document.getElementById('logs-section').style.display = 'none';
+                document.getElementById('driveSelectionContainer').style.display = 'none';
+                
+                // Ocultar o botão de refresh durante o scan
+                document.getElementById('refreshButton').style.display = 'none';
+                
+                // Start scan
+                getDriveInfo(selectedDrives);
+            });
             
             // Adicionar evento de clique ao botão de atualização
             document.getElementById('refreshButton').addEventListener('click', () => {
                 // Resetar displays
                 document.getElementById('success-message').style.display = 'none';
                 document.getElementById('logs-section').style.display = 'none';
+                document.getElementById('driveSelectionContainer').style.display = 'none';
                 
-                // Iniciar nova análise
+                // Ocultar o botão de refresh durante o scan
+                document.getElementById('refreshButton').style.display = 'none';
+                
+                // Re-detect drives first
+                detectAvailableDrives();
+                
+                // Iniciar nova análise (all drives)
                 getDriveInfo();
             });
         });
@@ -742,7 +1061,7 @@
         
         function runScript(scriptPath, title, description) {
             document.getElementById('loading').style.display = 'block';
-            document.getElementById('loading-text').textContent = description;
+            document.getElementById('progress-text').innerText = "Scanning storage, please wait...";
             document.getElementById('success-message').style.display = 'none';
             document.getElementById('logs-section').style.display = 'none';
             document.getElementById('output').innerHTML = '';
@@ -764,40 +1083,305 @@
             return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
         }
         
-        function getDriveInfo() {
-            // Redefinir status de exibição
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('loading-text').textContent = 'Scanning storage, please wait...';
-            document.getElementById('success-message').style.display = 'none';
-            document.getElementById('logs-section').style.display = 'none';
+        function getDriveInfo(drivesToScan = null) {
+            console.log('Gathering storage information...', drivesToScan ? `for drives: ${drivesToScan.join(', ')}` : 'for all drives');
             
-            // Executar script PowerShell para obter informações reais de armazenamento
-            ipcRenderer.send('run-powershell-script', 'windows/storage/real_storage_scan.ps1');
+            // Set loading state and update UI
+            document.getElementById('loading').style.display = 'flex';
+            document.getElementById('progress-text').innerText = "Scanning storage, please wait...";
             
-            // As informações serão processadas pelo handler de eventos abaixo
-            document.getElementById('system-drive-usage').style.width = '0%';
-            document.getElementById('system-drive-used').textContent = 'Scanning...';
-            document.getElementById('system-drive-total').textContent = 'Please wait';
+            // Hide the scan container during scanning
+            document.querySelector('.scan-storage-container').style.display = 'none';
             
-            document.getElementById('system-files-size').textContent = 'Scanning...';
-            document.getElementById('downloads-size').textContent = 'Scanning...';
-            document.getElementById('recyclebin-size').textContent = 'Scanning...';
-            document.getElementById('temp-files-size').textContent = 'Scanning...';
+            // Ocultar o botão de refresh durante o scan
+            document.getElementById('refreshButton').style.display = 'none';
             
-            document.getElementById('images-size').textContent = 'Scanning...';
-            document.getElementById('videos-size').textContent = 'Scanning...';
-            document.getElementById('audio-size').textContent = 'Scanning...';
-            document.getElementById('documents-size').textContent = 'Scanning...';
-            document.getElementById('apps-size').textContent = 'Scanning...';
+            // Reset and start progress bar animation
+            const progressBar = document.getElementById('scan-progress-bar');
+            progressBar.style.width = '0%';
             
-            // Definir um timeout para atualizar a interface se o script demorar muito
-            setTimeout(() => {
-                const loading = document.getElementById('loading');
-                if (loading.style.display !== 'none') {
-                    // Verificar se ainda estamos carregando após 60 segundos
-                    document.getElementById('loading-text').textContent = 'Taking longer than expected, please be patient...';
+            // Start progress animation
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                // Move progress forward in irregular increments to simulate a real scan
+                if (progress < 90) {
+                    const increment = Math.random() * 5 + 1; // Random increment between 1-6%
+                    progress += increment;
+                    if (progress > 90) progress = 90; // Cap at 90% until completion
+                    progressBar.style.width = progress + '%';
+                    
+                    // Update progress text periodically
+                    if (progress < 30) {
+                        document.getElementById('progress-text').innerText = "Analyzing drives...";
+                    } else if (progress < 60) {
+                        document.getElementById('progress-text').innerText = "Scanning file types...";
+                    } else if (progress < 85) {
+                        document.getElementById('progress-text').innerText = "Finalizing analysis...";
+                    }
                 }
-            }, 60000);
+            }, 800);
+            
+            // Store interval ID to stop it later
+            window.currentProgressInterval = progressInterval;
+            
+            // Disable scan button and show loading
+            const scanButton = document.getElementById('scanStorageButton');
+            scanButton.disabled = true;
+            
+            // Clear any existing drive cards
+            const drivesContainer = document.getElementById('drives-container');
+            drivesContainer.innerHTML = '';
+            
+            // Hide storage analysis card until scan completes
+            document.getElementById('storage-analysis-section').style.display = 'none';
+            
+            // Update all text elements to show scanning status
+            document.getElementById('images-size').innerText = "Scanning...";
+            document.getElementById('videos-size').innerText = "Scanning...";
+            document.getElementById('audio-size').innerText = "Scanning...";
+            document.getElementById('documents-size').innerText = "Scanning...";
+            document.getElementById('apps-size').innerText = "Scanning...";
+            
+            // If scan takes too long, update message
+            const timeoutId = setTimeout(() => {
+                document.getElementById('progress-text').innerText = "Scanning is taking longer than expected. This may require administrator privileges...";
+            }, 60000); // 60 seconds
+
+            // Create storage for system details
+            window.systemDetails = {
+                systemFilesSize: 0,
+                downloadsSize: 0,
+                recycleBinSize: 0,
+                tempFilesSize: 0
+            };
+            
+            // Set up a parameter for specific drives if needed
+            let scriptPath = './windows/storage/real_storage_scan.ps1';
+            
+            // If specific drives are selected, add parameters
+            if (drivesToScan && drivesToScan.length > 0) {
+                // Create a comma-separated list of drives
+                const drivesParam = drivesToScan.join(',');
+                scriptPath += ` -drives "${drivesParam}"`;
+            }
+            
+            // Enviar caminho correto do script com parâmetros, se necessário
+            // Aqui é onde os privilégios administrativos serão solicitados
+            ipcRenderer.send('run-powershell-script', scriptPath);
+            
+            // Configurar manipuladores de eventos para receber as respostas
+            
+            // Limpar manipuladores existentes para evitar duplicação
+            ipcRenderer.removeAllListeners('script-output');
+            ipcRenderer.removeAllListeners('script-error');
+            ipcRenderer.removeAllListeners('script-completed');
+            
+            // Configurar novos manipuladores
+            ipcRenderer.on('script-output', (event, data) => {
+                console.log("Received script output:", data);
+                
+                // Processa os dados do script real_storage_scan.ps1
+                if (data.includes('|')) {
+                    const parts = data.split('|');
+                    const dataType = parts[0];
+                    
+                    console.log("Processing data type:", dataType);
+                    
+                    switch (dataType) {
+                        case 'DRIVE_INFO':
+                            const driveLetter = parts[1];
+                            const totalSpace = parseInt(parts[2]) || 0;
+                            const freeSpace = parseInt(parts[3]) || 0;
+                            const usedSpace = parseInt(parts[4]) || 0;
+                            const usedPercentage = parseFloat(parts[5]) || 0;
+                            
+                            console.log(`Drive info (${driveLetter}):`, totalSpace, freeSpace, usedSpace, usedPercentage);
+                            
+                            // Create or update card for each drive
+                            createOrUpdateDriveCard(driveLetter, totalSpace, freeSpace, usedSpace, usedPercentage);
+                            break;
+                        
+                        case 'SYSTEM_FILES_SIZE':
+                            const systemFilesSize = parseInt(parts[1]) || 0;
+                            console.log("System files size:", systemFilesSize);
+                            window.systemDetails.systemFilesSize = systemFilesSize;
+                            updateSystemDetailsCard();
+                            break;
+                        
+                        case 'DOWNLOADS_SIZE':
+                            const downloadsSize = parseInt(parts[1]) || 0;
+                            console.log("Downloads size:", downloadsSize);
+                            window.systemDetails.downloadsSize = downloadsSize;
+                            updateSystemDetailsCard();
+                            break;
+                        
+                        case 'RECYCLE_BIN_SIZE':
+                            const recycleBinSize = parseInt(parts[1]) || 0;
+                            console.log("Recycle bin size:", recycleBinSize);
+                            window.systemDetails.recycleBinSize = recycleBinSize;
+                            updateSystemDetailsCard();
+                            break;
+                        
+                        case 'TEMP_FILES_SIZE':
+                            const tempFilesSize = parseInt(parts[1]) || 0;
+                            console.log("Temp files size:", tempFilesSize);
+                            window.systemDetails.tempFilesSize = tempFilesSize;
+                            updateSystemDetailsCard();
+                            break;
+                        
+                        case 'IMAGES_SIZE':
+                            const imagesSize = parseInt(parts[1]) || 0;
+                            console.log("Images size:", imagesSize);
+                            document.getElementById('images-size').textContent = formatBytes(imagesSize);
+                            break;
+                        
+                        case 'VIDEOS_SIZE':
+                            const videosSize = parseInt(parts[1]) || 0;
+                            console.log("Videos size:", videosSize);
+                            document.getElementById('videos-size').textContent = formatBytes(videosSize);
+                            break;
+                        
+                        case 'AUDIO_SIZE':
+                            const audioSize = parseInt(parts[1]) || 0;
+                            console.log("Audio size:", audioSize);
+                            document.getElementById('audio-size').textContent = formatBytes(audioSize);
+                            break;
+                        
+                        case 'DOCUMENTS_SIZE':
+                            const documentsSize = parseInt(parts[1]) || 0;
+                            console.log("Documents size:", documentsSize);
+                            document.getElementById('documents-size').textContent = formatBytes(documentsSize);
+                            break;
+                        
+                        case 'APPS_SIZE':
+                            const appsSize = parseInt(parts[1]) || 0;
+                            console.log("Apps size:", appsSize);
+                            document.getElementById('apps-size').textContent = formatBytes(appsSize);
+                            break;
+                    }
+                }
+                
+                // Exibir logs para outros scripts e ocultar o indicador de carregamento quando o script terminar
+                if (data === 'SCRIPT_COMPLETED') {
+                    clearTimeout(timeoutId);
+                    
+                    // Finalizar a barra de progresso
+                    if (window.currentProgressInterval) {
+                        clearInterval(window.currentProgressInterval);
+                    }
+                    document.getElementById('scan-progress-bar').style.width = '100%';
+                    document.getElementById('progress-text').innerText = "Scan completed!";
+                    
+                    // Hide loading after a short delay to allow the user to see the completed progress bar
+                    setTimeout(() => {
+                        document.getElementById('loading').style.display = 'none';
+                        // Show the scan storage container again
+                        document.querySelector('.scan-storage-container').style.display = 'flex';
+                        // Show refresh button if scan was successful enough to display drives
+                        if (document.querySelector('.drive-card')) {
+                            document.getElementById('refreshButton').style.display = 'flex';
+                        }
+                    }, 1500);
+                    
+                    // Mostrar cartão de análise de armazenamento após o scan
+                    document.getElementById('storage-analysis-section').style.display = 'block';
+                    
+                    // Restaurar o botão de scan
+                    scanButton.disabled = false;
+                    scanButton.innerHTML = '<i class="fas fa-hdd"></i> Scan Storage';
+                    
+                    console.log("Script completed");
+                }
+            });
+
+            ipcRenderer.on('script-error', (event, error) => {
+                clearTimeout(timeoutId);
+                
+                // Stop the progress animation
+                if (window.currentProgressInterval) {
+                    clearInterval(window.currentProgressInterval);
+                }
+                
+                // Criar uma animação onde a barra vai até ~80% e depois para
+                document.getElementById('scan-progress-bar').style.width = '80%';
+                document.getElementById('progress-text').innerText = "Scan failed";
+                
+                // Restaurar o botão de scan em caso de erro
+                scanButton.disabled = false;
+                scanButton.innerHTML = '<i class="fas fa-hdd"></i> Scan Storage';
+                
+                console.error('PowerShell script error:', error);
+                
+                // Reset all fields that are still showing "Scanning..."
+                const elements = document.querySelectorAll('[id$="-size"]');
+                elements.forEach(element => {
+                    if (element.innerText === "Scanning...") {
+                        element.innerText = "Data unavailable";
+                    }
+                });
+                
+                document.getElementById('success-message').style.display = 'block';
+                document.getElementById('success-message').className = 'error-message';
+                document.getElementById('success-message').innerText = "Error: Could not execute storage scan. This may require administrator privileges.";
+                
+                // Hide loading after a short delay
+                setTimeout(() => {
+                    document.getElementById('loading').style.display = 'none';
+                    // Show the scan storage container again
+                    document.querySelector('.scan-storage-container').style.display = 'flex';
+                    // Show refresh button if scan was successful enough to display drives
+                    if (document.querySelector('.drive-card')) {
+                        document.getElementById('refreshButton').style.display = 'flex';
+                    }
+                }, 1500);
+            });
+
+            ipcRenderer.on('script-completed', (event) => {
+                clearTimeout(timeoutId);
+                
+                // Finalizar a barra de progresso
+                if (window.currentProgressInterval) {
+                    clearInterval(window.currentProgressInterval);
+                }
+                document.getElementById('scan-progress-bar').style.width = '100%';
+                document.getElementById('progress-text').innerText = "Scan completed!";
+                
+                // Hide loading after a short delay
+                setTimeout(() => {
+                    document.getElementById('loading').style.display = 'none';
+                    // Show the scan storage container again
+                    document.querySelector('.scan-storage-container').style.display = 'flex';
+                    // Show refresh button if scan was successful enough to display drives
+                    if (document.querySelector('.drive-card')) {
+                        document.getElementById('refreshButton').style.display = 'flex';
+                    }
+                }, 1500);
+                
+                // Mostrar cartão de análise de armazenamento após o scan
+                document.getElementById('storage-analysis-section').style.display = 'block';
+                
+                // Restaurar o botão de scan
+                scanButton.disabled = false;
+                scanButton.innerHTML = '<i class="fas fa-hdd"></i> Scan Storage';
+                
+                // Verificar se algum dos valores ainda está como "Scanning..."
+                const elements = document.querySelectorAll('[id$="-size"]');
+                const hasIncompleteData = Array.from(elements).some(el => el.textContent === 'Scanning...');
+                
+                if (hasIncompleteData) {
+                    // Se ainda tivermos dados incompletos, exibir uma mensagem de aviso
+                    document.getElementById('success-message').style.display = 'block';
+                    document.getElementById('success-message').className = 'warning-message';
+                    document.getElementById('success-message').innerText = "Some storage data could not be retrieved. This might be due to permission issues.";
+                } else {
+                    // Se todos os dados foram atualizados, exibir mensagem de sucesso
+                    document.getElementById('success-message').style.display = 'block';
+                    document.getElementById('success-message').className = 'success-message';
+                    document.getElementById('success-message').innerText = "Storage scan completed successfully!";
+                }
+                
+                console.log("Storage scan completed");
+            });
         }
         
         function getStorageBreakdown() {
@@ -813,149 +1397,258 @@
             output.appendChild(line);
             output.scrollTop = output.scrollHeight;
         }
-
-        ipcRenderer.on('script-output', (event, data) => {
-            const loading = document.getElementById('loading');
-            const successMessage = document.getElementById('success-message');
-            const logsSection = document.getElementById('logs-section');
+        
+        // Function to create or update a drive card
+        function createOrUpdateDriveCard(driveLetter, totalSpace, freeSpace, usedSpace, usedPercentage) {
+            const drivesContainer = document.getElementById('drives-container');
+            const driveId = `drive-card-${driveLetter.replace(':', '')}`;
             
-            console.log("Received script output:", data);
-            
-            // Processa os dados do script real_storage_scan.ps1
-            if (data.includes('|')) {
-                const parts = data.split('|');
-                const dataType = parts[0];
-                
-                console.log("Processing data type:", dataType);
-                
-                switch (dataType) {
-                    case 'DRIVE_INFO':
-                        if (parts[1] === 'C:') {  // Sistema operacional
-                            const totalSpace = parseInt(parts[2]) || 0;
-                            const freeSpace = parseInt(parts[3]) || 0;
-                            const usedSpace = parseInt(parts[4]) || 0;
-                            const usedPercentage = parseFloat(parts[5]) || 0;
-                            
-                            console.log("Drive info:", totalSpace, freeSpace, usedSpace, usedPercentage);
-                            
-                            document.getElementById('system-drive-usage').style.width = `${usedPercentage}%`;
-                            document.getElementById('system-drive-used').textContent = `Used: ${formatBytes(usedSpace)}`;
-                            document.getElementById('system-drive-total').textContent = `Total: ${formatBytes(totalSpace)}`;
-                        }
-                        break;
-                    
-                    case 'SYSTEM_FILES_SIZE':
-                        const systemFilesSize = parseInt(parts[1]) || 0;
-                        console.log("System files size:", systemFilesSize);
-                        document.getElementById('system-files-size').textContent = formatBytes(systemFilesSize);
-                        break;
-                    
-                    case 'DOWNLOADS_SIZE':
-                        const downloadsSize = parseInt(parts[1]) || 0;
-                        console.log("Downloads size:", downloadsSize);
-                        document.getElementById('downloads-size').textContent = formatBytes(downloadsSize);
-                        break;
-                    
-                    case 'RECYCLE_BIN_SIZE':
-                        const recycleBinSize = parseInt(parts[1]) || 0;
-                        console.log("Recycle bin size:", recycleBinSize);
-                        document.getElementById('recyclebin-size').textContent = formatBytes(recycleBinSize);
-                        break;
-                    
-                    case 'TEMP_FILES_SIZE':
-                        const tempFilesSize = parseInt(parts[1]) || 0;
-                        console.log("Temp files size:", tempFilesSize);
-                        document.getElementById('temp-files-size').textContent = formatBytes(tempFilesSize);
-                        break;
-                    
-                    case 'IMAGES_SIZE':
-                        const imagesSize = parseInt(parts[1]) || 0;
-                        console.log("Images size:", imagesSize);
-                        document.getElementById('images-size').textContent = formatBytes(imagesSize);
-                        break;
-                    
-                    case 'VIDEOS_SIZE':
-                        const videosSize = parseInt(parts[1]) || 0;
-                        console.log("Videos size:", videosSize);
-                        document.getElementById('videos-size').textContent = formatBytes(videosSize);
-                        break;
-                    
-                    case 'AUDIO_SIZE':
-                        const audioSize = parseInt(parts[1]) || 0;
-                        console.log("Audio size:", audioSize);
-                        document.getElementById('audio-size').textContent = formatBytes(audioSize);
-                        break;
-                    
-                    case 'DOCUMENTS_SIZE':
-                        const documentsSize = parseInt(parts[1]) || 0;
-                        console.log("Documents size:", documentsSize);
-                        document.getElementById('documents-size').textContent = formatBytes(documentsSize);
-                        break;
-                    
-                    case 'APPS_SIZE':
-                        const appsSize = parseInt(parts[1]) || 0;
-                        console.log("Apps size:", appsSize);
-                        document.getElementById('apps-size').textContent = formatBytes(appsSize);
-                        break;
-                }
+            // Ensure the drives container has the grid layout
+            if (!drivesContainer.classList.contains('drives-grid')) {
+                drivesContainer.classList.add('drives-grid');
             }
             
-            // Exibir logs para outros scripts e ocultar o indicador de carregamento quando o script terminar
-            if (data === 'SCRIPT_COMPLETED') {
-                loading.style.display = 'none';
-                console.log("Script completed");
-            } else if (!data.includes('|')) {
-                loading.style.display = 'none';
-                logsSection.style.display = 'block';
-                addOutputLine(data);
-            }
-        });
-
-        ipcRenderer.on('script-error', (event, data) => {
-            const loading = document.getElementById('loading');
-            const logsSection = document.getElementById('logs-section');
+            // Check if drive card already exists
+            let driveCard = document.getElementById(driveId);
             
-            loading.style.display = 'none';
-            logsSection.style.display = 'block';
-            
-            addOutputLine(data, 'error');
-        });
-
-        ipcRenderer.on('script-completed', (event) => {
-            const loading = document.getElementById('loading');
-            const successMessage = document.getElementById('success-message');
-            const logsSection = document.getElementById('logs-section');
-            
-            loading.style.display = 'none';
-            
-            // Verificar se algum dos valores ainda está como "Scanning..."
-            const pendingValues = [
-                document.getElementById('system-drive-used').textContent,
-                document.getElementById('system-files-size').textContent,
-                document.getElementById('downloads-size').textContent,
-                document.getElementById('recyclebin-size').textContent,
-                document.getElementById('temp-files-size').textContent,
-                document.getElementById('images-size').textContent,
-                document.getElementById('videos-size').textContent,
-                document.getElementById('audio-size').textContent,
-                document.getElementById('documents-size').textContent,
-                document.getElementById('apps-size').textContent
-            ];
-            
-            const hasIncompleteData = pendingValues.some(value => value === 'Scanning...');
-            
-            if (hasIncompleteData) {
-                // Se ainda tivermos dados incompletos, exibir uma mensagem de aviso
-                logsSection.style.display = 'block';
-                addOutputLine('Some storage data could not be retrieved. This might be due to permission issues.', 'error');
-                addOutputLine('Try refreshing the data or running the application as administrator.');
+            if (!driveCard) {
+                // Create new drive card
+                driveCard = document.createElement('div');
+                driveCard.id = driveId;
+                driveCard.className = 'drive-card';
+                
+                // Set drive icon based on type (C: gets desktop icon, others get hdd icon)
+                const isDriveC = driveLetter === 'C:';
+                const driveIcon = isDriveC ? 'fa-desktop' : 'fa-hdd';
+                const driveTitle = isDriveC ? 'System Drive' : 'Drive';
+                
+                driveCard.innerHTML = `
+                    <h3><i class="fas ${driveIcon}"></i> ${driveTitle} ${driveLetter}</h3>
+                    <div class="drive-card-details">
+                        <span>${formatBytes(freeSpace)} free</span>
+                        <span>${formatBytes(totalSpace)} total</span>
+                    </div>
+                    <div class="storage-chart">
+                        <div class="storage-chart-fill" id="${driveId}-usage" style="width: 0%;"></div>
+                    </div>
+                    <div class="storage-info">
+                        <span>${formatBytes(usedSpace)} used (${usedPercentage}%)</span>
+                    </div>
+                `;
+                
+                drivesContainer.appendChild(driveCard);
             } else {
-                // Se todos os dados foram atualizados, exibir mensagem de sucesso
-                successMessage.style.display = 'block';
+                // Update existing card
+                const usageBar = document.getElementById(`${driveId}-usage`);
+                if (usageBar) {
+                    usageBar.style.width = `${usedPercentage}%`;
+                }
+                
+                // Update the details
+                driveCard.querySelector('.drive-card-details').innerHTML = `
+                    <span>${formatBytes(freeSpace)} free</span>
+                    <span>${formatBytes(totalSpace)} total</span>
+                `;
+                
+                // Update usage info
+                driveCard.querySelector('.storage-info').innerHTML = `
+                    <span>${formatBytes(usedSpace)} used (${usedPercentage}%)</span>
+                `;
             }
             
-            addOutputLine('Storage scan completed');
-        });
+            // Set the width animation after a short delay
+            setTimeout(() => {
+                const usageBar = document.getElementById(`${driveId}-usage`);
+                if (usageBar) {
+                    usageBar.style.width = `${usedPercentage}%`;
+                }
+            }, 50);
+            
+            // C: drive also shows system details
+            if (driveLetter === 'C:') {
+                ensureSystemDetailsCard();
+            }
+        }
+        
+        // Function to create and update system details card
+        function ensureSystemDetailsCard() {
+            const drivesContainer = document.getElementById('drives-container');
+            let detailsCard = document.getElementById('system-details-card');
+            
+            if (!detailsCard) {
+                detailsCard = document.createElement('div');
+                detailsCard.id = 'system-details-card';
+                detailsCard.className = 'drive-card system-details';
+                
+                detailsCard.innerHTML = `
+                    <h3><i class="fas fa-info-circle"></i> System Details</h3>
+                    <div class="storage-detail">
+                        <div class="storage-type">
+                            <i class="fas fa-file-alt"></i>
+                            <span>System Files</span>
+                        </div>
+                        <div class="storage-value" id="system-files-size">Scanning...</div>
+                    </div>
+                    <div class="storage-detail">
+                        <div class="storage-type">
+                            <i class="fas fa-file-download"></i>
+                            <span>Downloads</span>
+                        </div>
+                        <div class="storage-value" id="downloads-size">Scanning...</div>
+                    </div>
+                    <div class="storage-detail">
+                        <div class="storage-type">
+                            <i class="fas fa-trash"></i>
+                            <span>Recycle Bin</span>
+                        </div>
+                        <div class="storage-value" id="recyclebin-size">Scanning...</div>
+                    </div>
+                    <div class="storage-detail">
+                        <div class="storage-type">
+                            <i class="fas fa-broom"></i>
+                            <span>Temporary Files</span>
+                        </div>
+                        <div class="storage-value" id="temp-files-size">Scanning...</div>
+                    </div>
+                `;
+                
+                drivesContainer.appendChild(detailsCard);
+            }
+        }
+        
+        // Update system details card with latest information
+        function updateSystemDetailsCard() {
+            if (!window.systemDetails) return;
+            
+            const details = window.systemDetails;
+            
+            if (document.getElementById('system-files-size')) {
+                document.getElementById('system-files-size').textContent = formatBytes(details.systemFilesSize);
+            }
+            
+            if (document.getElementById('downloads-size')) {
+                document.getElementById('downloads-size').textContent = formatBytes(details.downloadsSize);
+            }
+            
+            if (document.getElementById('recyclebin-size')) {
+                document.getElementById('recyclebin-size').textContent = formatBytes(details.recycleBinSize);
+            }
+            
+            if (document.getElementById('temp-files-size')) {
+                document.getElementById('temp-files-size').textContent = formatBytes(details.tempFilesSize);
+            }
+        }
+
+        // Function to detect available drives
+        function detectAvailableDrives() {
+            console.log('Detecting available drives...');
+            
+            // Não mostrar spinner de carregamento durante a detecção inicial
+            // document.getElementById('loading').style.display = 'block';
+            // document.getElementById('loading-text').innerText = "Detecting drives...";
+            
+            // Clear existing data
+            availableDrives = [];
+            selectedDrives = [];
+            
+            // Send request to PowerShell to list drives
+            // Não usamos run-powershell-script para evitar a promoção UAC
+            // Em vez disso, usamos um método mais simples que não requer privilégios de admin
+            ipcRenderer.send('list-drives');
+        
+            ipcRenderer.removeAllListeners('drives-detected');
+            ipcRenderer.removeAllListeners('drives-error');
+        
+            ipcRenderer.on('drives-detected', (event, drives) => {
+                console.log("Drives detected:", drives);
+                availableDrives = drives;
+                
+                if (availableDrives.length === 0) {
+                    availableDrives = ['C:'];
+                }
+                
+                if (availableDrives.length === 1) {
+                    selectedDrives = [...availableDrives];
+                }
+            });
+            
+            ipcRenderer.on('drives-error', (event, error) => {
+                console.error('Drive detection error:', error);
+                availableDrives = ['C:'];
+                selectedDrives = ['C:'];
+            });
+        }
+        
+        // Function to show drive selection interface
+        function showDriveSelectionInterface() {
+            const container = document.getElementById('driveSelectionContainer');
+            const chipsContainer = document.getElementById('driveChips');
+            const counter = document.getElementById('selectedCounter');
+            
+            // Clear previous chips
+            chipsContainer.innerHTML = '';
+            selectedDrives = [];
+            updateSelectedCounter();
+            
+            // Create chips for each drive
+            availableDrives.forEach(drive => {
+                const driveChip = document.createElement('div');
+                driveChip.className = 'drive-chip';
+                driveChip.dataset.drive = drive;
+                
+                const isSystemDrive = drive === 'C:';
+                const driveIcon = isSystemDrive ? 'fa-desktop' : 'fa-hdd';
+                const driveLabel = isSystemDrive ? 'System' : drive;
+                
+                if (isSystemDrive) {
+                    driveChip.classList.add('system');
+                }
+                
+                driveChip.innerHTML = `
+                    <i class="fas ${driveIcon}"></i> ${driveLabel}
+                `;
+                
+                // Add click handler
+                driveChip.addEventListener('click', () => {
+                    driveChip.classList.toggle('selected');
+                    
+                    if (driveChip.classList.contains('selected')) {
+                        // Add to selected drives
+                        if (!selectedDrives.includes(drive)) {
+                            selectedDrives.push(drive);
+                        }
+                    } else {
+                        // Remove from selected drives
+                        selectedDrives = selectedDrives.filter(d => d !== drive);
+                    }
+                    
+                    updateSelectedCounter();
+                });
+                
+                chipsContainer.appendChild(driveChip);
+            });
+            
+            // Show container with a smooth transition
+            container.style.display = 'flex';
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(-10px)';
+            
+            setTimeout(() => {
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+                container.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            }, 10);
+        }
+        
+        // Update the counter for selected drives
+        function updateSelectedCounter() {
+            const counter = document.getElementById('selectedCounter');
+            counter.textContent = selectedDrives.length;
+            
+            // Enable/disable the scan button based on selection
+            const scanButton = document.getElementById('scanSelectedButton');
+            scanButton.disabled = selectedDrives.length === 0;
+        }
     </script>
 </body>
 </html> 

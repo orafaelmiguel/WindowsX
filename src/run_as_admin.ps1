@@ -1,6 +1,9 @@
 param(
     [Parameter(Mandatory=$true)]
-    [string]$ScriptPath
+    [string]$ScriptPath,
+    
+    [Parameter(Mandatory=$false)]
+    [string]$ScriptParams = ""
 )
 
 $outputFile = "$env:TEMP\script_output.txt"
@@ -27,6 +30,13 @@ if (-not (Test-Path $ScriptPath)) {
     exit 1
 }
 
+# Construir o comando do script com parâmetros, se houver
+$scriptCommand = "`"$ScriptPath`""
+if ($ScriptParams) {
+    Write-Output "Script parameters: $ScriptParams"
+    $scriptCommand += " $ScriptParams"
+}
+
 # Limpa o arquivo de saída anterior se existir
 if (Test-Path $outputFile) {
     try {
@@ -45,7 +55,7 @@ Start-Process powershell.exe -Verb RunAs -ArgumentList @(
     '-Command', "& {
         try {
             Write-Output 'Starting script execution...'
-            & '$ScriptPath' *>&1 | Out-File -FilePath '$outputFile' -Append
+            & { & $scriptCommand } *>&1 | Out-File -FilePath '$outputFile' -Append
             Write-Output 'SCRIPT_COMPLETED'
         } catch {
             Write-Error `$_.Exception.Message

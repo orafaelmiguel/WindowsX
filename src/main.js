@@ -3,6 +3,7 @@ const path = require('path');
 const { spawn } = require('child_process');
 const fs = require('fs');
 const { electron } = require('process');
+const os = require('os'); // Para funções do sistema operacional
 
 // Settings file path
 const userDataPath = app.getPath('userData');
@@ -221,13 +222,24 @@ ipcMain.on('run-powershell-script', (event, scriptPath) => {
   
   let absoluteScriptPath;
   let runAsAdminPath;
+  let scriptParams = '';
   
   // Resolver os caminhos de forma mais robusta
   const appRoot = path.resolve(path.join(__dirname, '..'));
   console.log('App Root Directory:', appRoot);
   
+  // Verificar se o scriptPath contém parâmetros
+  let scriptFile = scriptPath;
+  
+  if (scriptPath.includes(' ')) {
+    // Separar o caminho do script dos parâmetros
+    const spaceIndex = scriptPath.indexOf(' ');
+    scriptFile = scriptPath.substring(0, spaceIndex);
+    scriptParams = scriptPath.substring(spaceIndex + 1);
+  }
+  
   // Normalizar o caminho do script (remover qualquer ../ ou ./ desnecessário)
-  const normalizedScriptPath = scriptPath.replace(/^\.\.\/\.\.\//, '').replace(/^\.\.\//, '');
+  const normalizedScriptPath = scriptFile.replace(/^\.\.\/\.\.\//, '').replace(/^\.\.\//, '');
   console.log('Normalized Script Path:', normalizedScriptPath);
   
   if (isPackaged) {
@@ -243,6 +255,7 @@ ipcMain.on('run-powershell-script', (event, scriptPath) => {
   
   console.log('App is packaged:', isPackaged);
   console.log('Full Script Path:', absoluteScriptPath);
+  console.log('Script Parameters:', scriptParams);
   console.log('Run As Admin Path:', runAsAdminPath);
   
   // Mostrar quais arquivos existem no diretório
@@ -266,14 +279,14 @@ ipcMain.on('run-powershell-script', (event, scriptPath) => {
   if (!fs.existsSync(absoluteScriptPath)) {
     const errorMsg = `Error: Script file not found at ${absoluteScriptPath}`;
     console.error(errorMsg);
-    mainWindow.webContents.send('script-output', errorMsg);
+    event.sender.send('script-error', errorMsg);
     return;
   }
   
   if (!fs.existsSync(runAsAdminPath)) {
     const errorMsg = `Error: Admin script not found at ${runAsAdminPath}`;
     console.error(errorMsg);
-    mainWindow.webContents.send('script-output', errorMsg);
+    event.sender.send('script-error', errorMsg);
     return;
   }
   
@@ -281,15 +294,25 @@ ipcMain.on('run-powershell-script', (event, scriptPath) => {
   
   // Se estamos rodando o script de análise de armazenamento real, vamos exibir uma mensagem de carregamento
   if (scriptPath.includes('real_storage_scan.ps1')) {
-    mainWindow.webContents.send('script-output', 'Scanning storage, this may take a few minutes...');
+    event.sender.send('script-output', 'Scanning storage, this may take a few minutes...');
   }
   
-  const powershell = spawn('powershell.exe', [
+  // Construir os argumentos para o PowerShell
+  const psArgs = [
     '-NoProfile',
     '-ExecutionPolicy', 'Bypass',
     '-File', runAsAdminPath,
     '-ScriptPath', absoluteScriptPath
-  ]);
+  ];
+  
+  // Adicionar parâmetros do script se existirem
+  if (scriptParams) {
+    psArgs.push('-ScriptParams', scriptParams);
+  }
+  
+  console.log('PowerShell arguments:', psArgs);
+  
+  const powershell = spawn('powershell.exe', psArgs);
 
   powershell.stdout.on('data', (data) => {
     const output = data.toString().trim();
@@ -301,7 +324,7 @@ ipcMain.on('run-powershell-script', (event, scriptPath) => {
       lines.forEach(line => {
         const trimmedLine = line.trim();
         if (trimmedLine) {
-          mainWindow.webContents.send('script-output', trimmedLine);
+          event.sender.send('script-output', trimmedLine);
         }
       });
     }
@@ -311,18 +334,63 @@ ipcMain.on('run-powershell-script', (event, scriptPath) => {
     const error = data.toString().trim();
     if (error) {
       console.error('Script error:', error);
-      mainWindow.webContents.send('script-error', error);
+      event.sender.send('script-error', error);
     }
   });
 
   powershell.on('close', (code) => {
     console.log(`PowerShell script exited with code ${code}`);
     if (code === 0) {
-      mainWindow.webContents.send('script-completed');
+      event.sender.send('script-completed');
     } else {
-      mainWindow.webContents.send('script-output', `Script failed with exit code: ${code}`);
+      event.sender.send('script-output', `Script failed with exit code: ${code}`);
     }
   });
+});
+
+// Lista drives sem privilégios de administrador
+ipcMain.on('list-drives', (event) => {
+  console.log('Listing drives without admin privileges...');
+  
+  // Em Windows, podemos usar método nativo
+  if (process.platform === 'win32') {
+    try {
+      // Lista letras de drive disponíveis sem precisar de PowerShell ou admin
+      const drives = [];
+      
+      // Verifica cada letra possível de drive
+      for (const letter of 'ABCDEFGHIJKLMNOPQRSTUVWXYZ') {
+        const drivePath = `${letter}:\\`;
+        try {
+          // Se conseguirmos acessar as estatísticas do drive, ele existe
+          fs.statSync(drivePath);
+          drives.push(`${letter}:`);
+        } catch (err) {
+          // Ignora erros - significa que o drive não existe
+        }
+      }
+      
+      console.log('Drives detected:', drives);
+      event.sender.send('drives-detected', drives);
+    } catch (error) {
+      console.error('Error detecting drives:', error);
+      event.sender.send('drives-error', error.message);
+    }
+  } else {
+    // Para outros sistemas, usamos uma abordagem diferente
+    try {
+      const rootFs = os.platform() === 'darwin' ? '/Volumes' : '/';
+      const drives = fs.readdirSync(rootFs)
+        .filter(name => !name.startsWith('.'))
+        .map(name => name);
+      
+      console.log('Drives detected:', drives);
+      event.sender.send('drives-detected', drives);
+    } catch (error) {
+      console.error('Error detecting drives:', error);
+      event.sender.send('drives-error', error.message);
+    }
+  }
 });
 
 // Settings window handlers - agora gerenciados pela página, não pela janela
