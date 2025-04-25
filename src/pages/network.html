@@ -232,37 +232,59 @@
         }
 
         .script-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 2rem;
         }
 
         .script-card {
             background-color: var(--card);
-            color: var(--card-foreground);
             border-radius: var(--radius);
-            padding: 1.5rem;
-            transition: all 0.2s;
+            padding: 2rem;
             border: 1px solid var(--border);
+            transition: all 0.3s;
+            max-width: 350px;
+            width: 100%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
         .script-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             border-color: var(--ring);
         }
 
         .script-card h3 {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: 600;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
             color: var(--foreground);
         }
 
         .script-card p {
             color: var(--muted-foreground);
-            font-size: 0.875rem;
-            margin-bottom: 1rem;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .script-card .icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            background-color: var(--secondary);
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
         }
 
         .run-button {
@@ -415,21 +437,57 @@
     <div class="main-content">
         <div class="page-header">
             <h1>Network Optimization</h1>
-            <p>Optimize your network settings for better connectivity and performance</p>
+            <p>Optimize your network settings for better connectivity, speed, and overall performance</p>
+        </div>
+
+        <div class="section">
+            <h2>Network Enhancement Tools</h2>
+            <p>These advanced tools help you optimize your Windows network settings for improved performance. Apply these optimizations to enhance your online experience.</p>
         </div>
 
         <div class="script-list">
             <div class="script-card">
+                <div class="icon">
+                    <i class="fas fa-network-wired"></i>
+                </div>
                 <h3>TCP/IP Optimization</h3>
-                <p>Optimize your network settings for better performance.</p>
+                <p>Optimize your TCP/IP settings for better network performance. This enhances connection speed, reduces latency, and improves overall data transfer efficiency.</p>
                 <button class="run-button" onclick="runScript('windows/network/tcp_ip_boost.ps1', 'TCP/IP Optimization', 'Optimizing network settings for better performance...')">Run Script</button>
             </div>
 
             <div class="script-card">
+                <div class="icon">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
                 <h3>Network Protocols</h3>
-                <p>Optimize network protocols for improved connectivity.</p>
+                <p>Optimize network protocols for improved connectivity. This adjustment fine-tunes how your computer communicates with other devices on the network.</p>
                 <button class="run-button" onclick="runScript('windows/network/protocols.ps1', 'Network Protocols', 'Optimizing network protocols for better connectivity...')">Run Script</button>
             </div>
+            
+            
+        </div>
+        
+        <div class="section" style="margin-top: 3rem;">
+            <h2>Network Optimization Benefits</h2>
+            <p>Optimizing your Windows network settings can provide several advantages:</p>
+            <ul style="list-style-type: none; margin: 1.5rem 0;">
+                <li style="margin-bottom: 0.75rem; display: flex; align-items: center;">
+                    <i class="fas fa-check" style="color: var(--primary); margin-right: 0.75rem;"></i>
+                    <span>Faster download and upload speeds</span>
+                </li>
+                <li style="margin-bottom: 0.75rem; display: flex; align-items: center;">
+                    <i class="fas fa-check" style="color: var(--primary); margin-right: 0.75rem;"></i>
+                    <span>Reduced latency (ping) in online games</span>
+                </li>
+                <li style="margin-bottom: 0.75rem; display: flex; align-items: center;">
+                    <i class="fas fa-check" style="color: var(--primary); margin-right: 0.75rem;"></i>
+                    <span>More stable video streaming with less buffering</span>
+                </li>
+                <li style="margin-bottom: 0.75rem; display: flex; align-items: center;">
+                    <i class="fas fa-check" style="color: var(--primary); margin-right: 0.75rem;"></i>
+                    <span>Better connection stability for video calls and conferencing</span>
+                </li>
+            </ul>
         </div>
 
         <div class="loading" id="loading">
