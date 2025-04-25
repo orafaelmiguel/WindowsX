@@ -410,11 +410,13 @@
             transition: all 0.3s;
             max-width: 350px;
             width: 100%;
+            height: 360px; /* Increased height to accommodate longer text */
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            position: relative; /* For positioning the button */
         }
 
         .script-card:hover {
@@ -433,8 +435,15 @@
         .script-card p {
             color: var(--muted-foreground);
             font-size: 1rem;
-            margin-bottom: 1.5rem;
             line-height: 1.6;
+            flex-grow: 1; /* Allow paragraph to grow and push button down */
+            margin-bottom: 0; /* Remove bottom margin */
+            overflow: hidden; /* Prevent text overflow */
+            display: -webkit-box;
+            -webkit-line-clamp: 5; /* Limit to 5 lines for uniformity */
+            -webkit-box-orient: vertical;
+            height: 130px; /* Fixed height for paragraph */
+            margin-top: 0.5rem; /* Consistent top margin */
         }
         
         .script-card .icon {
@@ -448,6 +457,18 @@
             align-items: center;
             justify-content: center;
             margin-bottom: 1.5rem;
+        }
+
+        .script-card .run-button {
+            position: absolute; /* Position at bottom of card */
+            bottom: 2rem;
+            width: calc(100% - 4rem); /* Account for padding */
+            margin-top: 0; /* Remove top margin */
+            height: 40px; /* Fixed height for all buttons */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
         }
 
         .run-button {
@@ -947,7 +968,7 @@
                     <i class="fas fa-broom"></i>
                 </div>
                 <h3>Disk Cleanup</h3>
-                <p>Remove temporary files and free up disk space quickly. This helps improve system performance and recover valuable storage space.</p>
+                <p>Remove temporary files and free up disk space quickly. This helps improve system performance and recovers valuable storage space for other files.</p>
                 <button class="run-button" onclick="runScript('windows/storage/disk_cleanup.ps1', 'Disk Cleanup', 'Cleaning temporary files...')">Run Script</button>
             </div>
 
@@ -956,7 +977,7 @@
                     <i class="fas fa-search"></i>
                 </div>
                 <h3>Large Files Scanner</h3>
-                <p>Find large files that might be taking up unnecessary space. Identifies files you may no longer need or could archive elsewhere.</p>
+                <p>Find large files that might be taking up unnecessary space. Identifies files you may no longer need or could move to external storage to free up disk space.</p>
                 <button class="run-button" onclick="runScript('windows/storage/large_files_scan.ps1', 'Large Files Scanner', 'Scanning for large files...')">Run Script</button>
             </div>
 
@@ -965,7 +986,7 @@
                     <i class="fas fa-archive"></i>
                 </div>
                 <h3>Windows Cache Cleaner</h3>
-                <p>Clean Windows system caches to improve performance. Removes unnecessary cached data that accumulates over time.</p>
+                <p>Clean Windows system caches to improve performance. Removes unnecessary cached data that accumulates over time and can slow down your system operation.</p>
                 <button class="run-button" onclick="runScript('windows/storage/cache_cleanup.ps1', 'Windows Cache Cleaner', 'Cleaning system caches...')">Run Script</button>
             </div>
 
@@ -974,7 +995,7 @@
                     <i class="fas fa-copy"></i>
                 </div>
                 <h3>Duplicate Files Finder</h3>
-                <p>Find and remove duplicate files to free up space. Identifies identical files that are unnecessarily taking up storage.</p>
+                <p>Find and remove duplicate files to free up space. Identifies identical files that are unnecessarily taking up storage space across your drives and folders.</p>
                 <button class="run-button" onclick="runScript('windows/storage/duplicate_finder.ps1', 'Duplicate Files Finder', 'Searching for duplicate files...')">Run Script</button>
             </div>
         </div>

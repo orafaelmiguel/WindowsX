@@ -247,11 +247,13 @@
             transition: all 0.3s;
             max-width: 350px;
             width: 100%;
+            height: 360px;
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            position: relative;
         }
 
         .script-card:hover {
@@ -270,8 +272,15 @@
         .script-card p {
             color: var(--muted-foreground);
             font-size: 1rem;
-            margin-bottom: 1.5rem;
             line-height: 1.6;
+            flex-grow: 1;
+            margin-bottom: 0;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 5;
+            -webkit-box-orient: vertical;
+            height: 130px;
+            margin-top: 0.5rem;
         }
         
         .script-card .icon {
@@ -288,6 +297,15 @@
         }
 
         .run-button {
+            position: absolute;
+            bottom: 2rem;
+            width: calc(100% - 4rem);
+            margin-top: 0;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
             background-color: var(--primary);
             color: var(--primary-foreground);
             border: none;
@@ -295,8 +313,6 @@
             border-radius: var(--radius);
             cursor: pointer;
             transition: background-color 0.2s;
-            width: 100%;
-            font-weight: 500;
         }
 
         .run-button:hover {
