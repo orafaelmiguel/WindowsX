@@ -1,17 +1,15 @@
 const { ipcRenderer } = require('electron');
         
-// Verificar e aplicar o tema ao carregar a página
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Verificar o tema salvo no localStorage
     const darkTheme = localStorage.getItem('darkTheme') === 'true';
     if (darkTheme) {
         document.body.classList.add('dark');
     }
 });
 
-// Initialize sidebar state
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Check if sidebar state is stored in localStorage
     const sidebarExpanded = localStorage.getItem('sidebarExpanded') === 'true';
     const sidebar = document.querySelector('.sidebar');
     const mainContent = document.querySelector('.main-content');
@@ -21,15 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
         mainContent.classList.add('sidebar-expanded');
     }
 });
-
-// Toggle sidebar
 document.getElementById('sidebarToggle').addEventListener('click', () => {
     const sidebar = document.querySelector('.sidebar');
     const mainContent = document.querySelector('.main-content');
     sidebar.classList.toggle('expanded');
     mainContent.classList.toggle('sidebar-expanded');
     
-    // Store sidebar state in localStorage
     localStorage.setItem('sidebarExpanded', sidebar.classList.contains('expanded'));
 });
 
