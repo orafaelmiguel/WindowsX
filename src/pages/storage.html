@@ -395,37 +395,59 @@
         }
 
         .script-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 2rem;
         }
 
         .script-card {
             background-color: var(--card);
-            color: var(--card-foreground);
             border-radius: var(--radius);
-            padding: 1.5rem;
-            transition: all 0.2s;
+            padding: 2rem;
             border: 1px solid var(--border);
+            transition: all 0.3s;
+            max-width: 350px;
+            width: 100%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
         .script-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             border-color: var(--ring);
         }
 
         .script-card h3 {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: 600;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
             color: var(--foreground);
         }
 
         .script-card p {
             color: var(--muted-foreground);
-            font-size: 0.875rem;
-            margin-bottom: 1rem;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .script-card .icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            background-color: var(--secondary);
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
         }
 
         .run-button {
@@ -921,26 +943,38 @@
 
         <div class="script-list">
             <div class="script-card">
+                <div class="icon">
+                    <i class="fas fa-broom"></i>
+                </div>
                 <h3>Disk Cleanup</h3>
-                <p>Remove temporary files and free up disk space quickly.</p>
+                <p>Remove temporary files and free up disk space quickly. This helps improve system performance and recover valuable storage space.</p>
                 <button class="run-button" onclick="runScript('windows/storage/disk_cleanup.ps1', 'Disk Cleanup', 'Cleaning temporary files...')">Run Script</button>
             </div>
 
             <div class="script-card">
+                <div class="icon">
+                    <i class="fas fa-search"></i>
+                </div>
                 <h3>Large Files Scanner</h3>
-                <p>Find large files that might be taking up unnecessary space.</p>
+                <p>Find large files that might be taking up unnecessary space. Identifies files you may no longer need or could archive elsewhere.</p>
                 <button class="run-button" onclick="runScript('windows/storage/large_files_scan.ps1', 'Large Files Scanner', 'Scanning for large files...')">Run Script</button>
             </div>
 
             <div class="script-card">
+                <div class="icon">
+                    <i class="fas fa-archive"></i>
+                </div>
                 <h3>Windows Cache Cleaner</h3>
-                <p>Clean Windows system caches to improve performance.</p>
+                <p>Clean Windows system caches to improve performance. Removes unnecessary cached data that accumulates over time.</p>
                 <button class="run-button" onclick="runScript('windows/storage/cache_cleanup.ps1', 'Windows Cache Cleaner', 'Cleaning system caches...')">Run Script</button>
             </div>
 
             <div class="script-card">
+                <div class="icon">
+                    <i class="fas fa-copy"></i>
+                </div>
                 <h3>Duplicate Files Finder</h3>
-                <p>Find and remove duplicate files to free up space.</p>
+                <p>Find and remove duplicate files to free up space. Identifies identical files that are unnecessarily taking up storage.</p>
                 <button class="run-button" onclick="runScript('windows/storage/duplicate_finder.ps1', 'Duplicate Files Finder', 'Searching for duplicate files...')">Run Script</button>
             </div>
         </div>
