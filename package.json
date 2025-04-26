@@ -1,6 +1,6 @@
 {
   "name": "WindowsX",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Aplicativo desktop para otimização do Windows 10",
   "main": "src/main.js",
   "scripts": {
@@ -23,10 +23,21 @@
     "electron-builder": "^24.9.1"
   },
   "build": {
-    "appId": "com.WindowsX.app",
+    "appId": "com.rafaelmiguel.windowsx",
+    "productName": "WindowsX",
     "win": {
-      "target": "nsis",
-      "icon": "public/icon.png"
+      "target": ["nsis"],
+      "icon": "public/icon.png",
+      "artifactName": "${productName} Setup ${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "allowElevation": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "WindowsX",
+      "artifactName": "${productName} Setup ${version}.${ext}"
     },
     "mac": {
       "target": []
