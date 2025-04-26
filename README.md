@@ -1,6 +1,6 @@
 ## WindowsX – Windows Optimization Suite
 
-[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)  [![GitHub stars](https://img.shields.io/github/stars/yourusername/WindowsX?style=social)](https://github.com/yourusername/WindowsX/stargazers)  [![GitHub issues](https://img.shields.io/github/issues/yourusername/WindowsX)](https://github.com/yourusername/WindowsX/issues)
+[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)  [![GitHub stars](https://img.shields.io/github/stars/orafaelmiguel/WindowsX?style=social)](https://github.com/orafaelmiguel/WindowsX/stargazers)  [![GitHub issues](https://img.shields.io/github/issues/orafaelmiguel/WindowsX)](https://github.com/orafaelmiguel/WindowsX/issues)
 
 > **WindowsX** is an Electron‑based desktop app that unifies powerful optimization, cleanup, monitoring, and maintenance tools for Windows.
 
