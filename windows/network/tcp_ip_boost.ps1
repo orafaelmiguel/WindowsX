@@ -25,7 +25,6 @@ write-Host ""
 Write-Host "--------------------------------------------" -ForegroundColor Yellow
 Write-Host "Restarting active network adapters to apply changes..."
 Write-Host "--------------------------------------------" -ForegroundColor Yellow
-# I swear to god if this doesn't work this time...
 Get-NetAdapter | Where-Object { $_.Status -eq 'Up' } | Restart-NetAdapter -Confirm:$False
 write-Host ""
 write-Host ""

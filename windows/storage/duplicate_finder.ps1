@@ -1,10 +1,6 @@
-# Duplicate Files Finder Script
-# This script finds duplicate files to help free up disk space
-
 Write-Output "Starting duplicate files scan..."
 Write-Output "This process may take a while depending on the number of files to scan."
 
-# Define paths to scan
 $pathsToScan = @(
     "$env:USERPROFILE\Downloads",
     "$env:USERPROFILE\Documents",
@@ -13,11 +9,10 @@ $pathsToScan = @(
     "$env:USERPROFILE\Desktop"
 )
 
-# Minimum file size to consider (skip very small files to speed up the process)
+
 $minSizeKB = 10  # 10 KB
 $minSizeBytes = $minSizeKB * 1KB
 
-# Function to format file sizes
 function Format-FileSize {
     param ([long]$Size)
     
@@ -29,7 +24,6 @@ function Format-FileSize {
     return "$Size bytes"
 }
 
-# Get files from specified paths
 Write-Output "Collecting file information..."
 $allFiles = @()
 
@@ -53,22 +47,16 @@ foreach ($path in $pathsToScan) {
 
 Write-Output "Total files to analyze: $($allFiles.Count)"
 
-# Group files by size to reduce comparison scope
 Write-Output "Grouping files by size..."
 $filesBySize = $allFiles | Group-Object -Property Length
 
-# Find potential duplicates (files with the same size)
 $potentialDuplicates = $filesBySize | Where-Object { $_.Count -gt 1 }
 Write-Output "Found $($potentialDuplicates.Count) groups of files with identical sizes."
-
-# Compare file hashes to find actual duplicates
 Write-Output "Comparing file contents to find actual duplicates..."
 $duplicateGroups = @()
 
 foreach ($sizeGroup in $potentialDuplicates) {
     Write-Output "Analyzing $($sizeGroup.Count) files of size $([math]::Round($sizeGroup.Name / 1MB, 2)) MB..."
-    
-    # Calculate hashes for each file in the group
     $filesWithHash = $sizeGroup.Group | ForEach-Object {
         try {
             $hash = Get-FileHash -Path $_.FullName -Algorithm MD5 -ErrorAction SilentlyContinue
@@ -86,11 +74,7 @@ foreach ($sizeGroup in $potentialDuplicates) {
             $null
         }
     } | Where-Object { $_ -ne $null }
-    
-    # Group files by hash
     $hashGroups = $filesWithHash | Group-Object -Property Hash
-    
-    # Add duplicate groups (more than one file with the same hash)
     $duplicateGroups += $hashGroups | Where-Object { $_.Count -gt 1 }
 }
 

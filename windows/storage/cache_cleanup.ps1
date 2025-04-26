@@ -1,9 +1,5 @@
-# Windows Cache Cleaner Script
-# This script cleans various Windows caches to improve performance and free up space
-
 Write-Output "Starting Windows cache cleanup..."
 
-# Calculate initial disk space
 $initialSpace = (Get-WmiObject -Class Win32_LogicalDisk -Filter "DeviceID='C:'" | Select-Object -ExpandProperty FreeSpace)
 $initialSpaceGB = [math]::Round($initialSpace / 1GB, 2)
 Write-Output "Initial free space: $initialSpaceGB GB"
@@ -17,7 +13,6 @@ try {
     Write-Output "Error flushing DNS cache: $_"
 }
 
-# Clean Windows Store Cache
 Write-Output "Cleaning Windows Store Cache..."
 try {
     Stop-Service -Name InstallService -Force -ErrorAction SilentlyContinue
@@ -32,7 +27,6 @@ try {
     Write-Output "Error cleaning Windows Store cache: $_"
 }
 
-# Clean Windows Font Cache
 Write-Output "Cleaning Windows Font Cache..."
 try {
     Stop-Service -Name "FontCache" -Force -ErrorAction SilentlyContinue
@@ -43,7 +37,6 @@ try {
     Write-Output "Error cleaning font cache: $_"
 }
 
-# Clean Windows Thumbnail Cache
 Write-Output "Cleaning Windows Thumbnail Cache..."
 try {
     Remove-Item -Path "$env:LOCALAPPDATA\Microsoft\Windows\Explorer\thumbcache_*.db" -Force -ErrorAction SilentlyContinue
@@ -52,7 +45,6 @@ try {
     Write-Output "Error cleaning thumbnail cache: $_"
 }
 
-# Clean Internet Explorer Cache
 Write-Output "Cleaning Internet Explorer Cache..."
 try {
     RunDll32.exe InetCpl.cpl, ClearMyTracksByProcess 8
@@ -61,7 +53,6 @@ try {
     Write-Output "Error cleaning Internet Explorer cache: $_"
 }
 
-# Clean System Restore Points (keeping the most recent one)
 Write-Output "Cleaning old System Restore Points..."
 try {
     $restorePoints = Get-ComputerRestorePoint
@@ -77,7 +68,6 @@ try {
     Write-Output "Error cleaning system restore points: $_"
 }
 
-# Clean Windows Error Reporting Files
 Write-Output "Cleaning Windows Error Reporting Files..."
 try {
     Remove-Item -Path "C:\ProgramData\Microsoft\Windows\WER\ReportArchive\*" -Recurse -Force -ErrorAction SilentlyContinue
@@ -87,7 +77,6 @@ try {
     Write-Output "Error cleaning Windows Error Reporting files: $_"
 }
 
-# Calculate space freed
 $finalSpace = (Get-WmiObject -Class Win32_LogicalDisk -Filter "DeviceID='C:'" | Select-Object -ExpandProperty FreeSpace)
 $finalSpaceGB = [math]::Round($finalSpace / 1GB, 2)
 $freedSpace = [math]::Round(($finalSpace - $initialSpace) / 1MB, 2)

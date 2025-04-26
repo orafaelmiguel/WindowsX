@@ -1,14 +1,9 @@
-# Large Files Scanner Script
-# This script scans the system for large files that might be taking up unnecessary space
-
 Write-Output "Starting large files scan..."
 Write-Output "This may take a few minutes, please wait..."
 
-# Define minimum file size to consider (100 MB)
 $minSizeMB = 100
 $minSizeBytes = $minSizeMB * 1MB
 
-# Define paths to scan
 $pathsToScan = @(
     "$env:USERPROFILE\Downloads",
     "$env:USERPROFILE\Documents",
@@ -16,8 +11,6 @@ $pathsToScan = @(
     "$env:USERPROFILE\Videos",
     "$env:USERPROFILE\Desktop"
 )
-
-# Function to format file sizes
 function Format-FileSize {
     param ([long]$Size)
     
@@ -29,7 +22,6 @@ function Format-FileSize {
     return "$Size bytes"
 }
 
-# Array to hold results
 $largeFiles = @()
 
 foreach ($path in $pathsToScan) {
@@ -55,7 +47,6 @@ foreach ($path in $pathsToScan) {
     }
 }
 
-# Display results
 Write-Output "`nLarge files scan completed."
 Write-Output "Found a total of $($largeFiles.Count) files larger than $minSizeMB MB."
 
@@ -66,7 +57,6 @@ if ($largeFiles.Count -gt 0) {
         Write-Output "$formattedSize : $($_.FullName)"
     }
     
-    # Calculate total size of large files
     $totalSize = ($largeFiles | Measure-Object -Property Length -Sum).Sum
     $formattedTotalSize = Format-FileSize -Size $totalSize
     
