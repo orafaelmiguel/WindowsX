@@ -299,7 +299,21 @@ function getDriveInfo(drivesToScan = null) {
         
         document.getElementById('success-message').style.display = 'block';
         document.getElementById('success-message').className = 'error-message';
-        document.getElementById('success-message').innerText = "Error: Could not execute storage scan. This may require administrator privileges.";
+        
+        // Customize error message based on error content
+        if (error.includes("Access violation") || error.includes("administrator privileges")) {
+            document.getElementById('success-message').innerHTML = `
+                <p>Error: Could not complete the storage scan.</p>
+                <p>This is likely due to restricted access to system folders.</p>
+                <p>Recommendations:</p>
+                <ul>
+                    <li>Try running WindowsX as administrator</li>
+                    <li>Some system folders will still show estimated values</li>
+                </ul>
+            `;
+        } else {
+            document.getElementById('success-message').innerText = "Error: Could not execute storage scan. This may require administrator privileges.";
+        }
         
         setTimeout(() => {
             document.getElementById('loading').style.display = 'none';

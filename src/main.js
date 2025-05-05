@@ -393,50 +393,93 @@ ipcMain.on('run-executable', (event, options) => {
   event.sender.send('script-output', 'Scanning storage, this may take a few minutes...');
   
   try {
-    const execProcess = spawn(absolutePath, args);
-
-    execProcess.stdout.on('data', (data) => {
-      const output = data.toString().trim();
-      if (output) {
-        console.log('Executable output:', output);
+    // Attempt to run with admin privileges on Windows if we're scanning disks
+    let execProcess;
+    
+    if (process.platform === 'win32' && scriptPath.includes('storage_scan')) {
+      try {
+        // Try launching with elevated privileges on Windows
+        const elevateProcess = spawn('powershell.exe', [
+          '-NoProfile',
+          '-ExecutionPolicy', 'Bypass',
+          '-Command', `Start-Process -FilePath "${absolutePath}" -ArgumentList "${args.join(' ')}" -Verb RunAs -Wait -WindowStyle Hidden`
+        ], { windowsHide: true });
         
-        // Split output by lines and send each line separately
-        const lines = output.split('\n');
-        lines.forEach(line => {
-          const trimmedLine = line.trim();
-          if (trimmedLine) {
-            event.sender.send('script-output', trimmedLine);
-          }
+        elevateProcess.on('error', (error) => {
+          console.error('Failed to start elevated process:', error);
+          // Fall back to normal execution
+          execProcess = spawn(absolutePath, args);
+          setupProcessHandlers(execProcess, event);
         });
+        
+        // Wait a bit for the elevated process to start
+        setTimeout(() => {
+          // Start a non-elevated scan as fallback
+          execProcess = spawn(absolutePath, args);
+          setupProcessHandlers(execProcess, event);
+        }, 3000);
+      } catch (error) {
+        console.error('Error attempting elevated execution:', error);
+        // Fall back to normal execution
+        execProcess = spawn(absolutePath, args);
+        setupProcessHandlers(execProcess, event);
       }
-    });
-
-    execProcess.stderr.on('data', (data) => {
-      const error = data.toString().trim();
-      if (error) {
-        console.error('Executable error:', error);
-        event.sender.send('script-error', error);
-      }
-    });
-
-    execProcess.on('error', (error) => {
-      console.error('Failed to start executable:', error);
-      event.sender.send('script-error', `Failed to start executable: ${error.message}`);
-    });
-
-    execProcess.on('close', (code) => {
-      console.log(`Executable exited with code ${code}`);
-      if (code === 0) {
-        event.sender.send('script-completed');
-      } else {
-        event.sender.send('script-error', `Scan failed with exit code: ${code}`);
-      }
-    });
+    } else {
+      // Normal execution for non-Windows or non-storage scan
+      execProcess = spawn(absolutePath, args);
+      setupProcessHandlers(execProcess, event);
+    }
   } catch (error) {
     console.error('Error launching executable:', error);
     event.sender.send('script-error', `Error launching executable: ${error.message}`);
   }
 });
+
+// Helper function for process event handling
+function setupProcessHandlers(process, event) {
+  process.stdout.on('data', (data) => {
+    const output = data.toString().trim();
+    if (output) {
+      console.log('Executable output:', output);
+      
+      // Split output by lines and send each line separately
+      const lines = output.split('\n');
+      lines.forEach(line => {
+        const trimmedLine = line.trim();
+        if (trimmedLine) {
+          event.sender.send('script-output', trimmedLine);
+        }
+      });
+    }
+  });
+
+  process.stderr.on('data', (data) => {
+    const error = data.toString().trim();
+    if (error) {
+      console.error('Executable error:', error);
+      event.sender.send('script-error', error);
+    }
+  });
+
+  process.on('error', (error) => {
+    console.error('Failed to start executable:', error);
+    event.sender.send('script-error', `Failed to start executable: ${error.message}`);
+  });
+
+  process.on('close', (code) => {
+    console.log(`Executable exited with code ${code}`);
+    if (code === 0) {
+      event.sender.send('script-completed');
+    } else {
+      // For exit code 3221225477 (0xC0000005), provide a more specific message
+      if (code === 3221225477) {
+        event.sender.send('script-error', `Access violation detected. The scan might require administrator privileges or there may be protected directories that cannot be accessed.`);
+      } else {
+        event.sender.send('script-error', `Scan failed with exit code: ${code}`);
+      }
+    }
+  });
+}
 
 // Lista drives sem privilégios de administrador
 ipcMain.on('list-drives', (event) => {
