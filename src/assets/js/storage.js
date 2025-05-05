@@ -170,14 +170,19 @@ function getDriveInfo(drivesToScan = null) {
         tempFilesSize: 0
     };
     
-    let scriptPath = './windows/storage/real_storage_scan.ps1';
+    // Use our new C executable instead of PowerShell
+    let scriptPath = './windows/storage/storage_scan';
+    let args = [];
     
     if (drivesToScan && drivesToScan.length > 0) {
         const drivesParam = drivesToScan.join(',');
-        scriptPath += ` -drives "${drivesParam}"`;
+        args = [drivesParam];
     }
     
-    ipcRenderer.send('run-powershell-script', scriptPath);
+    ipcRenderer.send('run-executable', {
+        scriptPath: scriptPath,
+        args: args
+    });
     
     ipcRenderer.removeAllListeners('script-output');
     ipcRenderer.removeAllListeners('script-error');
@@ -262,41 +267,20 @@ function getDriveInfo(drivesToScan = null) {
                     console.log("Apps size:", appsSize);
                     document.getElementById('apps-size').textContent = formatBytes(appsSize);
                     break;
+                    
+                case 'SCRIPT_COMPLETED':
+                    console.log("Script completion message received");
+                    // O próprio main.js já dispara o evento script-completed quando o processo termina
+                    break;
             }
-        }
-        
-        if (data === 'SCRIPT_COMPLETED') {
-            clearTimeout(timeoutId);
-            
-            if (window.currentProgressInterval) {
-                clearInterval(window.currentProgressInterval);
-            }
-            document.getElementById('scan-progress-bar').style.width = '100%';
-            document.getElementById('progress-text').innerText = "Scan completed!";
-            
-            setTimeout(() => {
-                document.getElementById('loading').style.display = 'none';
-                document.querySelector('.scan-storage-container').style.display = 'flex';
-                if (document.querySelector('.drive-card')) {
-                    document.getElementById('refreshButton').style.display = 'flex';
-                }
-            }, 1500);
-            
-            document.getElementById('storage-analysis-section').style.display = 'block';
-            
-            scanButton.disabled = false;
-            scanButton.innerHTML = '<i class="fas fa-hdd"></i> Scan Storage';
-            
-            console.log("Script completed");
         }
     });
-
+    
     ipcRenderer.on('script-error', (event, error) => {
-        clearTimeout(timeoutId);
-        
         if (window.currentProgressInterval) {
             clearInterval(window.currentProgressInterval);
         }
+        clearTimeout(timeoutId);
         
         document.getElementById('scan-progress-bar').style.width = '80%';
         document.getElementById('progress-text').innerText = "Scan failed";
@@ -304,7 +288,7 @@ function getDriveInfo(drivesToScan = null) {
         scanButton.disabled = false;
         scanButton.innerHTML = '<i class="fas fa-hdd"></i> Scan Storage';
         
-        console.error('PowerShell script error:', error);
+        console.error('Storage scan error:', error);
         
         const elements = document.querySelectorAll('[id$="-size"]');
         elements.forEach(element => {
@@ -548,52 +532,33 @@ function showDriveSelectionInterface() {
     updateSelectedCounter();
     
     availableDrives.forEach(drive => {
-        const driveChip = document.createElement('div');
-        driveChip.className = 'drive-chip';
-        driveChip.dataset.drive = drive;
-        
-        const isSystemDrive = drive === 'C:';
-        const driveIcon = isSystemDrive ? 'fa-desktop' : 'fa-hdd';
-        const driveLabel = isSystemDrive ? 'System' : drive;
-        
-        if (isSystemDrive) {
-            driveChip.classList.add('system');
-        }
-        
-        driveChip.innerHTML = `
-            <i class="fas ${driveIcon}"></i> ${driveLabel}
-        `;
-        
-        driveChip.addEventListener('click', () => {
-            driveChip.classList.toggle('selected');
+        const chip = document.createElement('div');
+        chip.className = 'drive-chip';
+        chip.textContent = drive;
+        chip.addEventListener('click', () => {
+            chip.classList.toggle('selected');
             
-            if (driveChip.classList.contains('selected')) {
+            if (chip.classList.contains('selected')) {
                 if (!selectedDrives.includes(drive)) {
                     selectedDrives.push(drive);
                 }
             } else {
-                selectedDrives = selectedDrives.filter(d => d !== drive);
+                const index = selectedDrives.indexOf(drive);
+                if (index !== -1) {
+                    selectedDrives.splice(index, 1);
+                }
             }
             
             updateSelectedCounter();
         });
         
-        chipsContainer.appendChild(driveChip);
+        chipsContainer.appendChild(chip);
     });
     
-    container.style.display = 'flex';
-    container.style.opacity = '0';
-    container.style.transform = 'translateY(-10px)';
-    
-    setTimeout(() => {
-        container.style.opacity = '1';
-        container.style.transform = 'translateY(0)';
-        container.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-    }, 10);
+    container.style.display = 'block';
 }
+
 function updateSelectedCounter() {
     const counter = document.getElementById('selectedCounter');
     counter.textContent = selectedDrives.length;
-    const scanButton = document.getElementById('scanSelectedButton');
-    scanButton.disabled = selectedDrives.length === 0;
 }

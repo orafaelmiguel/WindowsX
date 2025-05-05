@@ -348,6 +348,96 @@ ipcMain.on('run-powershell-script', (event, scriptPath) => {
   });
 });
 
+// Handle executable application execution with admin privileges
+ipcMain.on('run-executable', (event, options) => {
+  const { scriptPath, args = [] } = options;
+  const isPackaged = app.isPackaged;
+  
+  // Resolver os caminhos de forma mais robusta
+  const appRoot = path.resolve(path.join(__dirname, '..'));
+  console.log('App Root Directory:', appRoot);
+  
+  // Normalizar o caminho (remover qualquer ../ ou ./ desnecessário)
+  const normalizedPath = scriptPath.replace(/^\.\.\/\.\.\//, '').replace(/^\.\.\//, '');
+  console.log('Normalized Path:', normalizedPath);
+  
+  // Adicionar a extensão .exe para Windows se não estiver presente
+  let executablePath = normalizedPath;
+  if (!executablePath.endsWith('.exe') && process.platform === 'win32') {
+    executablePath += '.exe';
+  }
+  
+  let absolutePath;
+  if (isPackaged) {
+    // When running in packaged app, use the extraResources path
+    const resourcesPath = process.resourcesPath;
+    absolutePath = path.join(resourcesPath, executablePath);
+  } else {
+    // When running in development mode
+    absolutePath = path.join(appRoot, executablePath);
+  }
+  
+  console.log('App is packaged:', isPackaged);
+  console.log('Full Executable Path:', absolutePath);
+  console.log('Arguments:', args);
+  
+  // Verificar se o executável existe
+  if (!fs.existsSync(absolutePath)) {
+    const errorMsg = `Error: Executable not found at ${absolutePath}`;
+    console.error(errorMsg);
+    event.sender.send('script-error', errorMsg);
+    return;
+  }
+  
+  console.log('Executing storage scan...');
+  event.sender.send('script-output', 'Scanning storage, this may take a few minutes...');
+  
+  try {
+    const execProcess = spawn(absolutePath, args);
+
+    execProcess.stdout.on('data', (data) => {
+      const output = data.toString().trim();
+      if (output) {
+        console.log('Executable output:', output);
+        
+        // Split output by lines and send each line separately
+        const lines = output.split('\n');
+        lines.forEach(line => {
+          const trimmedLine = line.trim();
+          if (trimmedLine) {
+            event.sender.send('script-output', trimmedLine);
+          }
+        });
+      }
+    });
+
+    execProcess.stderr.on('data', (data) => {
+      const error = data.toString().trim();
+      if (error) {
+        console.error('Executable error:', error);
+        event.sender.send('script-error', error);
+      }
+    });
+
+    execProcess.on('error', (error) => {
+      console.error('Failed to start executable:', error);
+      event.sender.send('script-error', `Failed to start executable: ${error.message}`);
+    });
+
+    execProcess.on('close', (code) => {
+      console.log(`Executable exited with code ${code}`);
+      if (code === 0) {
+        event.sender.send('script-completed');
+      } else {
+        event.sender.send('script-error', `Scan failed with exit code: ${code}`);
+      }
+    });
+  } catch (error) {
+    console.error('Error launching executable:', error);
+    event.sender.send('script-error', `Error launching executable: ${error.message}`);
+  }
+});
+
 // Lista drives sem privilégios de administrador
 ipcMain.on('list-drives', (event) => {
   console.log('Listing drives without admin privileges...');
