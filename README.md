@@ -1,8 +1,10 @@
-## WindowsX – Windows Optimization Suite
+## Astro - Your Windows assistant
+
+<img src="https://github.com/user-attachments/assets/18e69bbd-9842-4f08-99f3-a0cb383aafc3" alt="icon" width="300"/>
 
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)  [![GitHub stars](https://img.shields.io/github/stars/orafaelmiguel/WindowsX?style=social)](https://github.com/orafaelmiguel/WindowsX/stargazers)  [![GitHub issues](https://img.shields.io/github/issues/orafaelmiguel/WindowsX)](https://github.com/orafaelmiguel/WindowsX/issues)
 
-> **WindowsX** is an Electron‑based desktop app that unifies powerful optimization, cleanup, monitoring, and maintenance tools for Windows.
+> **Astro** is an Electron‑based desktop app that unifies powerful optimization, cleanup, monitoring, and maintenance tools for Windows.
 
 ---
 
@@ -50,8 +52,8 @@
 ## 🚀 Installation
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/WindowsX.git
-cd WindowsX
+git clone https://github.com/yourusername/Astro.git
+cd Astro
 
 # Install dependencies
 npm install
@@ -118,7 +120,7 @@ npm run dist   # Package app
 
 ## 📁 Directory Structure
 ```
-WindowsX/
+Astro/
 ├─ src/
 │  ├─ pages/          # HTML + JS for each view
 │  └─ main.js         # Electron main process
